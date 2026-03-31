@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String  @id @default(uuid())
+  name         String
+  email        String  @unique
+  avatar_url   String?
+  password     String
+  streak_count Int     @default(0)
+
+  created_at DateTime @default(now())
+
+  //relations
+  prayers         Prayer[]
+  quran_session   QuranSession[]
+  adhkar          AdhkarProgress[]
+  tasbih_sessions TasbihSession[]
+  gems            Gems?
+}
+
+model Prayer {
+  id          String       @id @default(uuid())
+  user_id     String
+  prayer_name String
+  date        DateTime
+  status      PrayerStatus @default(PENDING)
+  location    locationType?
+
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, prayer_name, date])
+}
+
+model AdhkarProgress {
+  id       String   @id @default(uuid())
+  user_id  String
+  category AdhkarCategory
+  date     DateTime @db.Date
+
+  completed Boolean @default(false)
+
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, category, date])
+}
+
+model QuranSession {
+  id          String      @id @default(uuid())
+  user_id     String
+  type        SessionType
+  surah_name  String
+  verse_count Int
+  date        DateTime    @db.Date
+
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model TasbihSession {
+  id           String   @id @default(uuid())
+  user_id      String
+  tasbih_name  String
+  tasbih_count Int      @default(0)
+  completed    Boolean  @default(false)
+  date         DateTime
+
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Gems {
+  id      String @id @default(uuid())
+  user_id String @unique
+  total   Int    @default(0)
+
+  updated_at DateTime @updatedAt
+
+  // relation
+  user User @relation(fields: [user_id], references: [id])
+}
+
+enum PrayerStatus {
+  PENDING
+  MISSED
+  COMPLETED
+}
+
+enum SessionType {
+  HIFZ
+  REVISION
+}
+
+enum locationType {
+  HOME
+  MOSQUE
+}
+
+enum AdhkarCategory {
+  MORNING
+  NIGHT
+  SLEEP
+  EATING
+}
