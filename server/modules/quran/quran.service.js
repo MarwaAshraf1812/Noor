@@ -35,7 +35,6 @@ export const logQuranSession = async (userId, sessionData) => {
     throw new Error('Invalid session type');
   }
 
-  // Check goal achievement
   const todayStats = await prisma.quranSession.aggregate({
     _sum: { verse_count: true },
     where: { user_id: userId, type, date: todayDate }
@@ -105,7 +104,6 @@ export const getQuranAnalytics = async (userId) => {
   const targetHifz = user.daily_hifz_target;
   const targetRevision = user.daily_revision_target;
 
-  // 1. Get today's Hifz
   const todayHifz = await prisma.quranSession.aggregate({
     _sum: { verse_count: true },
     where: {
@@ -115,7 +113,6 @@ export const getQuranAnalytics = async (userId) => {
     }
   });
 
-  // 2. Get today's Revision
   const todayRevision = await prisma.quranSession.aggregate({
     _sum: { verse_count: true },
     where: {
@@ -125,7 +122,6 @@ export const getQuranAnalytics = async (userId) => {
     }
   });
 
-  // 3. Get total lifetime Hifz (for the "1000 آية" badge in UI)
   const totalHifz = await prisma.quranSession.aggregate({
     _sum: { verse_count: true },
     where: {
@@ -134,7 +130,6 @@ export const getQuranAnalytics = async (userId) => {
     }
   });
 
-  // 4. Get Current Streak from ActivityStreak model
   const streakRecord = await prisma.activityStreak.findUnique({
     where: {
       user_id_activity_type: {
@@ -144,7 +139,6 @@ export const getQuranAnalytics = async (userId) => {
     }
   });
 
-  // 5. Get weekly activity (last 7 days for the circles UI)
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 6);
 
@@ -156,7 +150,6 @@ export const getQuranAnalytics = async (userId) => {
     select: { date: true, type: true }
   });
 
-  // Map recent sessions to an array of 7 booleans
   const weeklyActivity = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(today);
@@ -210,14 +203,13 @@ export const getQuranHistory = async (userId, limit = 10) => {
 };
 
 export const getCurrentSurahProgress = async (userId) => {
-  // Find the last HIFZ session
   const lastSession = await prisma.quranSession.findFirst({
     where: { user_id: userId, type: 'HIFZ' },
     orderBy: { created_at: 'desc' }
   });
 
   if (!lastSession) {
-    return null; // The user hasn't memorized any surahs yet
+    return null;
   }
 
   const currentSurahName = lastSession.surah_name;
@@ -225,7 +217,6 @@ export const getCurrentSurahProgress = async (userId) => {
   
   if (!surahData) return null;
 
-  // Calculate total verses memorized in this surah so far
   const surahProgress = await prisma.quranSession.aggregate({
     _sum: { verse_count: true },
     where: {

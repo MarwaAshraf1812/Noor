@@ -16,12 +16,12 @@ export const POINTS_CONFIG = {
     SLEEP: 10,
   },
   QURAN: {
-    HIFZ_PER_AYAH: 2,       // حفظ 5 آيات = 10 نقاط
-    HIFZ_BONUS: 10,         // البونص المقفل للجلسة
-    REVISION_PER_AYAH: 1,   // مراجعة 10 آيات = 10 نقاط
+    HIFZ_PER_AYAH: 2,
+    HIFZ_BONUS: 10,
+    REVISION_PER_AYAH: 1,
     REVISION_BONUS: 5,
-    READING_PER_AYAH: 0.5,  // أو نخلي القراءة بالصفحة كاملة (مثلاً الصفحة بـ 10 نقاط) بدل الآية
-    GOAL_BONUS: 50,         // بونص إنهاء الهدف اليومي
+    READING_PER_AYAH: 0.5,
+    GOAL_BONUS: 50,
   },
 
   STREAK_BONUS: {
