@@ -16,14 +16,19 @@ export const POINTS_CONFIG = {
     SLEEP: 10,
   },
   QURAN: {
-    PER_AYAH: 10,
-    HIFZ_BONUS: 15,
+    HIFZ_PER_AYAH: 2,       // حفظ 5 آيات = 10 نقاط
+    HIFZ_BONUS: 10,         // البونص المقفل للجلسة
+    REVISION_PER_AYAH: 1,   // مراجعة 10 آيات = 10 نقاط
+    REVISION_BONUS: 5,
+    READING_PER_AYAH: 0.5,  // أو نخلي القراءة بالصفحة كاملة (مثلاً الصفحة بـ 10 نقاط) بدل الآية
+    GOAL_BONUS: 50,         // بونص إنهاء الهدف اليومي
   },
+
   STREAK_BONUS: {
     DAY_7: 50,
     DAY_30: 200,
   },
   LEVELS: {
     THRESHOLD_PER_LEVEL: 500, // كل 500 جوهرة بيطلع لفل
-  }
+  },
 };

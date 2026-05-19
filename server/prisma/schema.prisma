@@ -21,6 +21,9 @@ model User {
   avatar_url   String?
   password     String
   level        Int     @default(1)
+  daily_hifz_target     Int @default(5)
+  daily_revision_target Int @default(15)
+
 
   created_at DateTime @default(now())
 

@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from 'cors';
 import authRoute from "./modules/auth/auth.routes.js";
 import prayerRoutes from './modules/prayers/prayer.route.js';
+import quranRoutes from './modules/quran/quran.routes.js';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoute);
 app.use('/api/v1/prayer', prayerRoutes);
+app.use('/api/v1/quran', quranRoutes);
 
 
 export default app;
