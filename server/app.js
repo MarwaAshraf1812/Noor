@@ -5,6 +5,7 @@ import authRoute from "./modules/auth/auth.routes.js";
 import prayerRoutes from './modules/prayers/prayer.route.js';
 import quranRoutes from './modules/quran/quran.routes.js';
 import adhkarRoutes from './modules/adhkar/adhkar.route.js';
+import tasbihRoutes from './modules/tasbih/tasbih.routes.js';
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use("/api/v1/auth", authRoute);
 app.use('/api/v1/prayer', prayerRoutes);
 app.use('/api/v1/quran', quranRoutes);
 app.use('/api/v1/adhkar', adhkarRoutes);
+app.use('/api/v1/tasbih', tasbihRoutes);
 
 export default app;
