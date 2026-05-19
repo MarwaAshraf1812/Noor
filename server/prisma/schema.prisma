@@ -20,7 +20,7 @@ model User {
   email        String  @unique
   avatar_url   String?
   password     String
-  streak_count Int     @default(0)
+  level        Int     @default(1)
 
   created_at DateTime @default(now())
 
@@ -29,7 +29,9 @@ model User {
   quran_session   QuranSession[]
   adhkar          AdhkarProgress[]
   tasbih_sessions TasbihSession[]
-  gems            Gems?
+  gems             Gems?
+  activity_streaks ActivityStreak[]
+  achievements     Achievement[]
 }
 
 model Prayer {
@@ -103,6 +105,7 @@ enum PrayerStatus {
   PENDING
   MISSED
   COMPLETED
+  QADAA
 }
 
 enum SessionType {
@@ -120,4 +123,32 @@ enum AdhkarCategory {
   NIGHT
   SLEEP
   EATING
+}
+
+enum ActivityType {
+  PRAYER
+  QURAN
+  TASBIH
+  ADHKAR
+}
+
+model ActivityStreak {
+  id               String       @id @default(uuid())
+  user_id          String
+  activity_type    ActivityType
+  streak_count     Int          @default(0)
+  last_active_date DateTime?
+  
+  user User @relation(fields: [user_id], references: [id])
+  @@unique([user_id, activity_type])
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  user_id     String
+  badge_name  String
+  earned_at   DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+  @@unique([user_id, badge_name])
 }
