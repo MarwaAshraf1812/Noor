@@ -1,4 +1,6 @@
 import { recordPrayer, getPrayerDashboardData, MissedPrayers } from './prayer.service.js';
+import { getAllPrayerTimes } from '../../utils/prayerTimes.js';
+import { scheduleDailyReminders } from './notification.service.js';
 
 export const recordPrayerHandler = async (req, res, next) => {
   try {
@@ -32,6 +34,12 @@ export const getDashboardHandler = async (req, res, next) => {
     await MissedPrayers(userId, parseFloat(latitude), parseFloat(longitude));
 
     const dashboardData = await getPrayerDashboardData(userId, parseFloat(latitude), parseFloat(longitude));
+
+    // Schedule daily reminders for this user
+    const timings = await getAllPrayerTimes(parseFloat(latitude), parseFloat(longitude));
+    if (timings) {
+      scheduleDailyReminders(timings, userId).catch(e => console.error(`Failed to schedule reminders for user ${userId}:`, e));
+    }
 
     res.status(200).json({
       message: "تم جلب بيانات الصلاة بنجاح!",

@@ -1,14 +1,14 @@
 import axios from "axios";
 import { formatDateToYYYYMMDD, getCurrentMinutes, timeToMinutes } from './date.utils.js';
 
-let cachedPrayerTimes = null;
-let lastFetchedDate = null;
+const cachedPrayerTimes = new Map();
 
 export const getAllPrayerTimes = async (latitude, longitude) => {
   const today = formatDateToYYYYMMDD(new Date());
+  const cacheKey = `${today}-${latitude.toFixed(2)}-${longitude.toFixed(2)}`;
 
-  if (lastFetchedDate === today && cachedPrayerTimes) {
-    return cachedPrayerTimes;
+  if (cachedPrayerTimes.has(cacheKey)) {
+    return cachedPrayerTimes.get(cacheKey);
   }
 
   let attempts = 3;
@@ -19,9 +19,9 @@ export const getAllPrayerTimes = async (latitude, longitude) => {
       const allTimings = response.data.data.timings;
       const { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha } = allTimings;
 
-      lastFetchedDate = today;
-      cachedPrayerTimes = { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha };
-      return cachedPrayerTimes;
+      const timings = { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha };
+      cachedPrayerTimes.set(cacheKey, timings);
+      return timings;
     } catch (error) {
       attempts--;
       console.warn(`Aladhan API attempt failed (${3 - attempts}/3). Error: ${error.message}`);
@@ -29,7 +29,7 @@ export const getAllPrayerTimes = async (latitude, longitude) => {
       if (attempts === 0) {
         console.error("Aladhan API totally failed. Using default fallback timings.");
         // Fallback to default timings so the app stays functional
-        return DEFAULT_TIMINGS;
+        return null;
       }
       // Wait 1s before retry
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -37,14 +37,11 @@ export const getAllPrayerTimes = async (latitude, longitude) => {
   }
 }
 
-export const getCachedPrayerTimes = async () => {
-  const currentDate = formatDateToYYYYMMDD(new Date());
-
-  if (lastFetchedDate === currentDate) {
-    return cachedPrayerTimes;
-  } else {
-    return null;
-  }
+export const getCachedPrayerTimes = async (latitude, longitude) => {
+  const today = formatDateToYYYYMMDD(new Date());
+  const cacheKey = `${today}-${latitude.toFixed(2)}-${longitude.toFixed(2)}`;
+  
+  return cachedPrayerTimes.get(cacheKey) || null;
 }
 
 export const activePrayer = (timings) => {

@@ -104,12 +104,19 @@ export const recordPrayer = async(userId, prayerName, status, location, latitude
         gamification = await handleGemsAndLevel(userId, gemsAmount, tx);
     }
 
-    return { 
+    const responsePayload = { 
       prayerRecord, 
       dayCompleted, 
       streak: currentStreak,
       gamification
     }; 
+    
+    // Notify the user's connected devices to update their dashboard in real-time
+    import('../../config/socket.config.js').then(({ emitToUser }) => {
+       emitToUser(userId, 'dashboard_updated', responsePayload);
+    }).catch(e => console.error('Failed to emit dashboard update:', e));
+
+    return responsePayload;
   })
 }
 
