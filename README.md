@@ -202,10 +202,3 @@ Start the development server with hot-reloading:
 ```bash
 npm run dev
 ```
-
----
-
-## 🔗 Documentation Links
-
-*   For a complete list of endpoints, validation payloads, and response objects, see [Server README](./server/README.md).
-*   For the complete product logic and detailed specification of the gamification rewards, see [Noor Backend Documentation](./server/Noor_Backend_Documentation.md).
