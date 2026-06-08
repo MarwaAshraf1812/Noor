@@ -1,3 +1,4 @@
+
 # Noor Client 🌙
 
 The frontend web application for Noor—an interactive, gamified Islamic tracking application designed for children. Built using **React, Vite, and Tailwind CSS**, this client offers fluid, kid-friendly animations (via **Framer Motion**) and real-time level/achievement notifications (via **Socket.io-client**).
