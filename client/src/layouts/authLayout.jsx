@@ -1,10 +1,8 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-export const DashboardLayout = ({ children }) => {
+export const AuthLayout = ({ children }) => {
   return (
     <div>
-      DashboardLayout Component
       {children || <Outlet />}
     </div>
   );
