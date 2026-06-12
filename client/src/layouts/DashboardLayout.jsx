@@ -4,7 +4,6 @@ import { Outlet } from 'react-router-dom';
 export const DashboardLayout = ({ children }) => {
   return (
     <div>
-      DashboardLayout Component
       {children || <Outlet />}
     </div>
   );

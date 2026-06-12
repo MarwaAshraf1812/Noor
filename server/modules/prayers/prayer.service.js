@@ -199,9 +199,17 @@ export const getPrayerDashboardData = async (userId, latitude, longitude) => {
   const timings = await getAllPrayerTimes(latitude, longitude);
   const currentMinutes = getCurrentMinutes();
   
+  const completedPrayers = new Set(todaysRecords.filter(p => p.status === 'COMPLETED' || p.status === 'QADAA').map(p => p.prayer_name));
+
   let nextPrayer = null;
   for (const name of prayerNames) {
-    if (timeToMinutes(timings[name]) > currentMinutes) {
+    // Skip if already prayed today
+    if (completedPrayers.has(name)) {
+      continue;
+    }
+
+    // Stop and keep active for 10 minutes after prayer time
+    if (timeToMinutes(timings[name]) + 10 > currentMinutes) {
       nextPrayer = {
         name,
         time: timings[name],
