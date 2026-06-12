@@ -11,6 +11,22 @@ const app = express();
 
 
 app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    try {
+      const url = new URL(origin);
+      if (
+        url.hostname === "localhost" ||
+        url.hostname === "127.0.0.1" ||
+        origin === "https://elnoor-app.vercel.app"
+      ) {
+        return callback(null, true);
+      }
+    } catch (e) {
+      // invalid URL format, ignore
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']

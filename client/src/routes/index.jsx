@@ -3,15 +3,13 @@ import { useRoutes, Navigate } from 'react-router-dom';
 import LandingPage from '../pages/Landing';
 import { authRoutes } from './auth';
 import { appRoutes } from './appRoutes';
-import { useUserStore } from '../store/userStore';
+import useAuthStore from '../store/authStore';
 
-// Protected Route Guard
 export const ProtectedRoute = ({ children }) => {
-  const user = useUserStore((state) => state.user);
-  const token = localStorage.getItem('token'); // Fallback token check
+  const user = useAuthStore((state) => state.user);
 
-  if (!user && !token) {
-    return <Navigate to="/auth" replace />;
+  if (!user) {
+    return <Navigate to="/auth/login" replace />;
   }
 
   return children;
@@ -19,7 +17,6 @@ export const ProtectedRoute = ({ children }) => {
 
 export const AppRouter = () => {
   console.log("AppRouter component executing");
-  // Wrap dashboard routes with the ProtectedRoute guard
   const protectedAppRoutes = appRoutes.map((route) => {
     if (route.path === '/dashboard') {
       return {
