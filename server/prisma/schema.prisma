@@ -119,6 +119,7 @@ enum SessionType {
 enum locationType {
   HOME
   MOSQUE
+  CONGREGATION
 }
 
 enum AdhkarCategory {
