@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import logoImg from '../../assets/logo.png';
+import Button from '../UI/Button';
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -71,17 +72,9 @@ export const Navbar = () => {
           </nav>
 
           <div className="hidden md:flex items-center">
-            <motion.a
-              href="/auth"
-              className="px-6 py-2.5 bg-[#3b82f6] hover:bg-blue-600 text-white text-base font-bold rounded-xl shadow-md transition-all duration-200"
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0px 10px 20px rgba(59, 130, 246, 0.3)"
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
+            <Button to="/auth">
               دخول المغامرة
-            </motion.a>
+            </Button>
           </div>
 
           <div className="flex md:hidden">
@@ -116,13 +109,13 @@ export const Navbar = () => {
               </a>
             ))}
             <div className="pt-2">
-              <a
-                href="/auth"
+              <Button 
+                to="/auth" 
+                className="w-full" 
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block w-full py-3 bg-[#3b82f6] hover:bg-blue-600 text-white rounded-xl font-bold text-center shadow-sm"
               >
                 دخول المغامرة
-              </a>
+              </Button>
             </div>
           </div>
         </div>

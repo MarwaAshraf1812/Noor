@@ -4,6 +4,7 @@ import heroImg from '../../assets/noor_hero-1.png';
 import starImg from '../../assets/Star.png';
 import blueGem from '../../assets/blue_gem.png';
 import diamondRed from '../../assets/Diamond red.png';
+import Button from '../UI/Button';
 
 export const Hero = () => {
   return (
@@ -80,14 +81,9 @@ export const Hero = () => {
         transition={{ duration: 0.5, delay: 0.4 }}
         className="mb-12 z-10"
       >
-        <motion.a
-          href="/auth"
-          className="px-8 py-4 bg-[#3b82f6] hover:bg-blue-600 text-white text-lg font-bold rounded-2xl shadow-lg transition-colors inline-block"
-          whileHover={{ 
-            scale: 1.08,
-            boxShadow: "0px 15px 30px rgba(59, 130, 246, 0.4)"
-          }}
-          whileTap={{ scale: 0.95 }}
+        <Button 
+          to="/auth/login" 
+          className="px-8 py-4 text-lg"
           animate={{
             scale: [1, 1.04, 1],
           }}
@@ -100,7 +96,7 @@ export const Hero = () => {
           }}
         >
           ابدأ مغامرتك الآن
-        </motion.a>
+        </Button>
       </motion.div>
 
       <motion.div 
