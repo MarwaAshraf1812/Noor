@@ -1,67 +1,132 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useUserStore } from '../../store/userStore';
-import logo from '../../assets/logo.png';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import logoImg from '../../assets/logo.png';
 
-export default function Navbar() {
-  const user = useUserStore((state) => state.user);
+export const Navbar = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 30) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const menuItems = [
+    { name: 'الرئيسية', href: '#hero' },
+    { name: 'عن نور', href: '#about' },
+    { name: 'المميزات', href: '#features' },
+    { name: 'الأوسمة', href: '#badges' },
+  ];
 
   return (
-    <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-6xl bg-white/80 backdrop-blur-md border-3 border-purple-200 rounded-full px-6 py-3 flex items-center justify-between shadow-lg z-50 transition-all duration-300 hover:shadow-xl hover:border-purple-300">
-      {/* Logo */}
-      <Link to="/" className="flex items-center gap-2 group">
-        <img 
-          src={logo} 
-          alt="Noor Logo" 
-          className="h-10 w-auto animate-bounce-slow group-hover:scale-110 transition-transform duration-300"
-        />
-        <span className="text-2xl font-bold bg-gradient-to-r from-brand-purple to-brand-pink bg-clip-text text-transparent">
-          Noor <span className="font-sans text-brand-cyan">نُور</span>
-        </span>
-      </Link>
+    <motion.header 
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 ${
+        isScrolled 
+          ? 'bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm' 
+          : 'bg-transparent border-b-0 shadow-none'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="flex items-center justify-between">
+          
+          <div className="flex items-center">
+            <motion.a 
+              href="#hero" 
+              className="flex items-center"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <img 
+                src={logoImg} 
+                alt="نور" 
+                className="h-12 w-auto"
+              />
+            </motion.a>
+          </div>
 
-      {/* Nav Links */}
-      <div className="hidden md:flex items-center gap-8 font-semibold text-lg">
-        <a href="#about" className="text-gray-600 hover:text-brand-purple hover:scale-105 transition-all duration-200">
-          About
-        </a>
-        <a href="#treasures" className="text-gray-600 hover:text-brand-cyan hover:scale-105 transition-all duration-200">
-          Treasures
-        </a>
-        <a href="#avatars" className="text-gray-600 hover:text-brand-orange hover:scale-105 transition-all duration-200">
-          Friends
-        </a>
-        <a href="#badges" className="text-gray-600 hover:text-brand-pink hover:scale-105 transition-all duration-200">
-          Achievements
-        </a>
+          <nav className={`hidden md:flex items-center gap-12 font-bold text-lg transition-colors duration-300 ${
+            isScrolled ? 'text-slate-600' : 'text-[#1e3a8a]'
+          }`}>
+            {menuItems.map((item, index) => (
+              <motion.a 
+                key={index} 
+                href={item.href}
+                className="hover:text-blue-600 transition-colors duration-200 block"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {item.name}
+              </motion.a>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center">
+            <motion.a
+              href="/auth"
+              className="px-6 py-2.5 bg-[#3b82f6] hover:bg-blue-600 text-white text-base font-bold rounded-xl shadow-md transition-all duration-200"
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0px 10px 20px rgba(59, 130, 246, 0.3)"
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              دخول المغامرة
+            </motion.a>
+          </div>
+
+          <div className="flex md:hidden">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-slate-700 hover:text-blue-600 focus:outline-none p-2 rounded-lg bg-slate-50"
+            >
+              <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+
+        </div>
       </div>
 
-      {/* CTA Buttons */}
-      <div className="flex items-center gap-3">
-        {user ? (
-          <Link 
-            to="/dashboard" 
-            className="bg-brand-purple hover:bg-brand-purple-dark text-white px-6 py-2.5 rounded-full font-bold text-md shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-          >
-            My Dashboard
-          </Link>
-        ) : (
-          <>
-            <Link 
-              to="/auth" 
-              className="text-brand-purple hover:bg-purple-50 px-5 py-2.5 rounded-full font-bold text-md transition-all duration-200"
-            >
-              Sign In
-            </Link>
-            <Link 
-              to="/auth" 
-              className="bg-brand-yellow hover:bg-amber-400 text-purple-900 border-b-4 border-amber-600 hover:border-amber-700 active:border-b-0 px-6 py-2 rounded-full font-bold text-md shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0.5 transition-all duration-200"
-            >
-              Join Free!
-            </Link>
-          </>
-        )}
-      </div>
-    </nav>
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-slate-100 shadow-inner py-4">
+          <div className="px-6 space-y-3 font-bold text-center">
+            {menuItems.map((item, index) => (
+              <a
+                key={index}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block py-2.5 px-4 rounded-xl text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
+              >
+                {item.name}
+              </a>
+            ))}
+            <div className="pt-2">
+              <a
+                href="/auth"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block w-full py-3 bg-[#3b82f6] hover:bg-blue-600 text-white rounded-xl font-bold text-center shadow-sm"
+              >
+                دخول المغامرة
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </motion.header>
   );
-}
+};
