@@ -69,13 +69,28 @@ export const getTasbihAnalytics = async (userId) => {
   const progress = {
     "سبحان الله": 0,
     "الحمد لله": 0,
+    "الحمدلله": 0,
     "الله أكبر": 0,
+    "الله اكبر": 0,
     "سبحان الله وبحمده": 0
   };
 
   aggregates.forEach(item => {
-    if (progress[item.tasbih_name] !== undefined) {
-      progress[item.tasbih_name] = item._sum.tasbih_count || 0;
+    const name = item.tasbih_name;
+    const count = item._sum.tasbih_count || 0;
+
+    if (name === "سبحان الله") {
+      progress["سبحان الله"] += count;
+    } else if (name === "الحمد لله" || name === "الحمدلله") {
+      progress["الحمد لله"] += count;
+      progress["الحمدلله"] += count;
+    } else if (name === "الله أكبر" || name === "الله اكبر") {
+      progress["الله أكبر"] += count;
+      progress["الله اكبر"] += count;
+    } else if (name === "سبحان الله وبحمده") {
+      progress["سبحان الله وبحمده"] += count;
+    } else {
+      progress[name] = count;
     }
   });
 

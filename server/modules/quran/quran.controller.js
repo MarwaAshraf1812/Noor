@@ -1,4 +1,5 @@
 import { logQuranSession, getQuranAnalytics, getQuranHistory, getCurrentSurahProgress } from './quran.service.js';
+import { getQuranData } from '../../utils/quranSurah.js';
 
 export const submitQuranSession = async (req, res) => {
   try {
@@ -47,6 +48,15 @@ export const updateQuranTargets = async (req, res) => {
       message: "تم تحديث الهدف اليومي بنجاح",
       targets: updatedUser
     });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export const fetchSurahList = async (req, res) => {
+  try {
+    const list = await getQuranData();
+    res.status(200).json(list);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

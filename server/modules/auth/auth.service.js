@@ -68,3 +68,19 @@ export const loginUser = async(userData) => {
     throw error;
   }
 }
+
+export const getUserProfile = async (userId) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { gems: true }
+    });
+    if (!user) {
+      throw new Error("المستخدم غير موجود");
+    }
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  } catch (error) {
+    throw error;
+  }
+};

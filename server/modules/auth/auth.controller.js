@@ -61,3 +61,13 @@ export const logout = async (req, res) => {
   });
   res.status(200).json({ success: true, message: "تم تسجيل الخروج" });
 };
+
+export const getMe = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await authService.getUserProfile(userId);
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};

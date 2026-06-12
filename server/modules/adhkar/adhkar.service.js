@@ -14,7 +14,7 @@ export const logAdhkarSession = async (userId, category) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
-  const mappedCategory = category.toUpperCase();
+  const mappedCategory = category.toUpperCase() === 'EVENING' ? 'NIGHT' : category.toUpperCase();
   if (!CATEGORY_MAP[mappedCategory]) {
     throw new Error('تصنيف الأذكار غير مدعوم');
   }
@@ -77,11 +77,15 @@ export const getAdhkarAnalytics = async (userId) => {
   const status = {
     MORNING: false,
     NIGHT: false,
+    EVENING: false,
     SLEEP: false
   };
 
   completedToday.forEach(log => {
-    if (status[log.category] !== undefined) {
+    if (log.category === 'NIGHT') {
+      status.NIGHT = log.completed;
+      status.EVENING = log.completed;
+    } else if (status[log.category] !== undefined) {
       status[log.category] = log.completed;
     }
   });
@@ -102,7 +106,8 @@ export const getAdhkarAnalytics = async (userId) => {
 };
 
 export const getAdhkarList = async (category) => {
-  const arabicCategory = CATEGORY_MAP[category.toUpperCase()];
+  const normalized = category.toUpperCase() === 'EVENING' ? 'NIGHT' : category.toUpperCase();
+  const arabicCategory = CATEGORY_MAP[normalized];
   if (!arabicCategory) {
     throw new Error('تصنيف الأذكار غير مدعوم');
   } 

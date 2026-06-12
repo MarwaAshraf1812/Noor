@@ -62,9 +62,26 @@ export const getQuranSurahData = async (surahNumber) => {
   return null;
 }
 
+const normalizeArabic = (text) => {
+  if (!text) return "";
+  return text
+    .replace(/[\u064B-\u065F]/g, "") // remove Tashkeel
+    .replace(/[أإآ]/g, "ا")           // normalize Alef
+    .replace(/ة/g, "ه")               // normalize Teh Marbuta
+    .replace(/\s+/g, "")              // remove spaces
+    .replace(/^سورة/g, "");           // remove "سورة" prefix
+};
+
 export const getQuranSurahDataByName = async (surahName) => {
-  const  surahs = await loadQuranData();
-  const surah = surahs.find(s => s.englishName === surahName || s.name === surahName);
+  const surahs = await loadQuranData();
+  const normalizedSearch = normalizeArabic(surahName);
+  
+  const surah = surahs.find(s => 
+    s.englishName === surahName || 
+    s.name === surahName ||
+    normalizeArabic(s.name) === normalizedSearch ||
+    normalizeArabic(s.englishName) === normalizedSearch
+  );
   if(surah) {
     return {
       ...surah,

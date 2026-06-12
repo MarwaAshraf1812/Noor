@@ -1,5 +1,5 @@
 import express from 'express';
-import { submitQuranSession, fetchQuranDashboard, updateQuranTargets } from './quran.controller.js';
+import { submitQuranSession, fetchQuranDashboard, updateQuranTargets, fetchSurahList } from './quran.controller.js';
 import { authenticate } from '../../middleware/auth.middleware.js';
 import { checkLevelUp } from '../../middleware/checkLevelUp.middleware.js';
 
@@ -8,6 +8,7 @@ const router = express.Router();
 router.use(authenticate, checkLevelUp);
 
 router.get('/dashboard', fetchQuranDashboard);
+router.get('/surahs', fetchSurahList);
 
 router.post('/session', submitQuranSession);
 

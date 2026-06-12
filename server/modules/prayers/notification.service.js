@@ -47,6 +47,7 @@ export const scheduleDailyReminders = async (prayerTimings, userId) => {
   scheduledJobs[userId] = { pre: [], post: [] };
  
   Object.entries(prayerTimings).forEach(([prayerName, timings]) => {
+     if (prayerName === 'Sunrise') return;
      const prayerTime = getPrayerDate(timings);
  
      // 1. Pre-prayer alert (5 minutes before)
