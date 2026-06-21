@@ -39,7 +39,7 @@ export const login = async(req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "strict"
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict"
     });
 
     res.status(200).json({success: true, message: "تم تسجيل الدخول بنجاح", user});
@@ -57,7 +57,7 @@ export const logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict"
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict"
   });
   res.status(200).json({ success: true, message: "تم تسجيل الخروج" });
 };
