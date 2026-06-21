@@ -58,6 +58,23 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
     }
   }, [type, isOpen, surahsList]);
 
+  // Automatically match typed query to a surah in the list using normalized comparison
+  useEffect(() => {
+    if (!searchQuery) {
+      setSelectedSurah(null);
+      return;
+    }
+    const normSearch = normalizeArabic(searchQuery);
+    if (!normSearch) return;
+
+    const exactMatch = surahsList.find(s => normalizeArabic(s.name) === normSearch);
+    if (exactMatch) {
+      setSelectedSurah(exactMatch);
+    } else {
+      setSelectedSurah(null);
+    }
+  }, [searchQuery, surahsList]);
+
   if (!isOpen) return null;
 
   const handleSelectSurah = (surah) => {
