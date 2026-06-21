@@ -110,10 +110,8 @@ export default function Login() {
 
               <Button
                 variant="outline"
-                className="w-full py-3.5 border-slate-200 text-slate-600 flex items-center justify-center gap-2 hover:bg-slate-50"
-                onClick={() => {
-                  window.location.href = `${getBaseURL()}/auth/google`;
-                }}
+                disabled
+                className="w-full py-3.5 border-slate-200 text-slate-400 flex items-center justify-center gap-2 cursor-not-allowed opacity-60"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
