@@ -6,22 +6,24 @@ import { getAllPrayerTimes, activePrayer } from '../../utils/prayerTimes.js';
 export const recordPrayer = async(userId, prayerName, status, location, latitude, longitude, dateStr = null) => {
   return await prisma.$transaction(async(tx) => {
     const timings = await getAllPrayerTimes(latitude, longitude);
+    const timezone = timings?.meta_timezone;
     const currentActive = activePrayer(timings);
     
-    let targetDate = getStartOfToday();
+    let targetDate = getStartOfToday(timezone);
     let isTodayCheck = true;
     if (dateStr) {
       const [year, month, day] = dateStr.split('-').map(Number);
       targetDate = new Date(year, month - 1, day);
       targetDate.setHours(0, 0, 0, 0);
       
-      const todayStr = formatDateToYYYYMMDD(new Date());
+      const nowStr = new Date().toLocaleString("en-US", { timeZone: timezone });
+      const todayStr = formatDateToYYYYMMDD(new Date(nowStr));
       isTodayCheck = (dateStr === todayStr);
     }
 
     if (isTodayCheck) {
       const prayerTimesInMinutes = timeToMinutes(timings[prayerName])
-      const currentMinutes = getCurrentMinutes();
+      const currentMinutes = getCurrentMinutes(timezone);
       
       if (currentMinutes < prayerTimesInMinutes) {
         throw new Error("لا يمكنك تسجيل صلاة قبل موعدها!");
@@ -177,13 +179,14 @@ export const recordPrayer = async(userId, prayerName, status, location, latitude
 export const MissedPrayers = async(userId, latitude, longitude, tx = null) => {
   const db = tx || prisma;
   const timings = await getAllPrayerTimes(latitude, longitude);
+  const timezone = timings?.meta_timezone;
   const currentActive = activePrayer(timings);
   const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
   const currentIndex = prayers.indexOf(currentActive);
   const pastPrayers = prayers.slice(0, currentIndex); 
 
-  const today = getStartOfToday();
+  const today = getStartOfToday(timezone);
 
   const recordedPrayers = await db.prayer.findMany({
     where: {user_id: userId, date: today}
@@ -210,8 +213,11 @@ export const MissedPrayers = async(userId, latitude, longitude, tx = null) => {
 }
 
 export const getPrayerDashboardData = async (userId, latitude, longitude) => {
-  const today = getStartOfToday();
-  const sevenDays = getLastSevenDays();
+  const timings = await getAllPrayerTimes(latitude, longitude);
+  const timezone = timings?.meta_timezone;
+
+  const today = getStartOfToday(timezone);
+  const sevenDays = getLastSevenDays(timezone);
   const sevenDaysAgo = sevenDays[0];
 
   const prayers = await prisma.prayer.findMany({
@@ -250,8 +256,7 @@ export const getPrayerDashboardData = async (userId, latitude, longitude) => {
 
    const weeklyCompletedCount = prayers.filter(p => p.status === 'COMPLETED' || p.status === 'QADAA').length;
 
-  const timings = await getAllPrayerTimes(latitude, longitude);
-  const currentMinutes = getCurrentMinutes();
+  const currentMinutes = getCurrentMinutes(timezone);
   
   const completedPrayers = new Set(todaysRecords.filter(p => p.status === 'COMPLETED' || p.status === 'QADAA').map(p => p.prayer_name));
 

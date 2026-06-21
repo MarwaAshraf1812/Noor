@@ -3,16 +3,18 @@ export const timeToMinutes = (timeStr) => {
   return hours * 60 + minutes;
 };
 
-export const getStartOfToday = () => {
-  const today = new Date();
+export const getStartOfToday = (timezone = 'Africa/Cairo') => {
+  const nowStr = new Date().toLocaleString("en-US", { timeZone: timezone });
+  const today = new Date(nowStr);
   today.setHours(0, 0, 0, 0);
   return today;
 };
 
-export const getLastSevenDays = () => {
+export const getLastSevenDays = (timezone = 'Africa/Cairo') => {
   const days = [];
+  const nowStr = new Date().toLocaleString("en-US", { timeZone: timezone });
   for (let i = 6; i >= 0; i--) {
-    const d = new Date();
+    const d = new Date(nowStr);
     d.setDate(d.getDate() - i);
     d.setHours(0, 0, 0, 0);
     days.push(d);
@@ -27,7 +29,8 @@ export const formatDateToYYYYMMDD = (date) => {
   return `${y}-${m}-${d}`;
 };
 
-export const getCurrentMinutes = () => {
-  const now = new Date();
-  return now.getHours() * 60 + now.getMinutes();
+export const getCurrentMinutes = (timezone = 'Africa/Cairo') => {
+  const nowStr = new Date().toLocaleString("en-US", { timeZone: timezone, hour12: false, hour: '2-digit', minute: '2-digit' });
+  const [hours, minutes] = nowStr.split(':').map(Number);
+  return hours * 60 + minutes;
 };

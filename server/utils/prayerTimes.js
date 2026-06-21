@@ -17,9 +17,10 @@ export const getAllPrayerTimes = async (latitude, longitude) => {
       const response = await axios.get(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=5`, { timeout: 5000 });
 
       const allTimings = response.data.data.timings;
+      const timezone = response.data.data.meta.timezone;
       const { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha } = allTimings;
 
-      const timings = { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha };
+      const timings = { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha, meta_timezone: timezone };
       cachedPrayerTimes.set(cacheKey, timings);
       return timings;
     } catch (error) {
@@ -45,7 +46,7 @@ export const getCachedPrayerTimes = async (latitude, longitude) => {
 }
 
 export const activePrayer = (timings) => {
-  const currentTime = getCurrentMinutes();
+  const currentTime = getCurrentMinutes(timings.meta_timezone);
   const {Fajr, Dhuhr, Asr, Maghrib, Isha} = timings;
 
   const fajr = timeToMinutes(Fajr);

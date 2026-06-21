@@ -9,11 +9,41 @@ const usePrayerStore = create((set, get) => ({
   dashboardData: null,
   loading: false,
   error: null,
+  userLat: null,
+  userLng: null,
 
   fetchDashboard: async (lat, lng) => {
     set({ loading: true, error: null });
-    const latitude = lat ?? DEFAULT_LAT;
-    const longitude = lng ?? DEFAULT_LNG;
+
+    let latitude = lat;
+    let longitude = lng;
+
+    if (!latitude || !longitude) {
+      latitude = get().userLat;
+      longitude = get().userLng;
+    }
+
+    if (!latitude || !longitude) {
+      if (navigator.geolocation) {
+        try {
+          const pos = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+          });
+          latitude = pos.coords.latitude;
+          longitude = pos.coords.longitude;
+        } catch (error) {
+          console.warn('Geolocation error or denied. Using default location.');
+          latitude = DEFAULT_LAT;
+          longitude = DEFAULT_LNG;
+        }
+      } else {
+        latitude = DEFAULT_LAT;
+        longitude = DEFAULT_LNG;
+      }
+    }
+
+    set({ userLat: latitude, userLng: longitude });
+
     try {
       const response = await prayerServices.getDashboard(latitude, longitude);
       set({ dashboardData: response.data.data, loading: false });
@@ -24,8 +54,8 @@ const usePrayerStore = create((set, get) => ({
 
   recordPrayer: async (prayerName, status, location, dateStr = null, lat = null, lng = null) => {
     set({ loading: true, error: null });
-    const latitude = lat ?? DEFAULT_LAT;
-    const longitude = lng ?? DEFAULT_LNG;
+    const latitude = lat ?? get().userLat ?? DEFAULT_LAT;
+    const longitude = lng ?? get().userLng ?? DEFAULT_LNG;
     try {
       const response = await prayerServices.record({
         prayerName,
