@@ -2,11 +2,18 @@ import { prisma } from '../../config/prisma.config.js';
 import { POINTS_CONFIG } from '../../config/points.config.js';
 import { handleGemsAndLevel, updateActivityStreak } from '../gamification/gamification.service.js';
 import { getQuranSurahDataByName } from '../../utils/quranSurah.js';
+const getTodayLocalMidnightAsUTC = () => {
+  const offsetMs = 3 * 60 * 60 * 1000;
+  const localTime = new Date(new Date().getTime() + offsetMs);
+  const year = localTime.getUTCFullYear();
+  const month = String(localTime.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(localTime.getUTCDate()).padStart(2, '0');
+  return new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+};
 
 export const logQuranSession = async (userId, sessionData) => {
   const { surah_name, verse_count, type } = sessionData;
-  const todayDate = new Date();
-  todayDate.setHours(0, 0, 0, 0);
+  const todayDate = getTodayLocalMidnightAsUTC();
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -86,75 +93,81 @@ export const logQuranSession = async (userId, sessionData) => {
 };
 
 export const getQuranAnalytics = async (userId) => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { 
-      daily_hifz_target: true,
-      daily_revision_target: true
-    }
-  });
+  const today = getTodayLocalMidnightAsUTC();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setUTCDate(today.getUTCDate() - 6);
+
+  const [user, todayHifz, todayRevision, totalHifz, streakRecord, recentSessions] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { 
+        daily_hifz_target: true,
+        daily_revision_target: true
+      }
+    }),
+    prisma.quranSession.aggregate({
+      _sum: { verse_count: true },
+      where: {
+        user_id: userId,
+        type: 'HIFZ',
+        date: today
+      }
+    }),
+    prisma.quranSession.aggregate({
+      _sum: { verse_count: true },
+      where: {
+        user_id: userId,
+        type: 'REVISION',
+        date: today
+      }
+    }),
+    prisma.quranSession.aggregate({
+      _sum: { verse_count: true },
+      where: {
+        user_id: userId,
+        type: 'HIFZ'
+      }
+    }),
+    prisma.activityStreak.findUnique({
+      where: {
+        user_id_activity_type: {
+          user_id: userId,
+          activity_type: 'QURAN'
+        }
+      }
+    }),
+    prisma.quranSession.findMany({
+      where: {
+        user_id: userId,
+        date: { gte: sevenDaysAgo }
+      },
+      select: { date: true, type: true, verse_count: true }
+    })
+  ]);
 
   if (!user) {
     throw new Error('User not found');
   }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
   const targetHifz = user.daily_hifz_target;
   const targetRevision = user.daily_revision_target;
-
-  const todayHifz = await prisma.quranSession.aggregate({
-    _sum: { verse_count: true },
-    where: {
-      user_id: userId,
-      type: 'HIFZ',
-      date: today
-    }
-  });
-
-  const todayRevision = await prisma.quranSession.aggregate({
-    _sum: { verse_count: true },
-    where: {
-      user_id: userId,
-      type: 'REVISION',
-      date: today
-    }
-  });
-
-  const totalHifz = await prisma.quranSession.aggregate({
-    _sum: { verse_count: true },
-    where: {
-      user_id: userId,
-      type: 'HIFZ'
-    }
-  });
-
-  const streakRecord = await prisma.activityStreak.findUnique({
-    where: {
-      user_id_activity_type: {
-        user_id: userId,
-        activity_type: 'QURAN'
-      }
-    }
-  });
-
-  const sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 6);
-
-  const recentSessions = await prisma.quranSession.findMany({
-    where: {
-      user_id: userId,
-      date: { gte: sevenDaysAgo }
-    },
-    select: { date: true, type: true }
-  });
 
   const weeklyActivity = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const isActive = recentSessions.some(s => s.date.getTime() === d.getTime());
+    d.setUTCDate(today.getUTCDate() - i);
+    
+    const hifzCount = recentSessions
+      .filter(s => s.date.getTime() === d.getTime() && s.type === 'HIFZ')
+      .reduce((sum, s) => sum + (s.verse_count || 0), 0);
+    const revisionCount = recentSessions
+      .filter(s => s.date.getTime() === d.getTime() && s.type === 'REVISION')
+      .reduce((sum, s) => sum + (s.verse_count || 0), 0);
+
+    const isHifzOk = targetHifz === 0 || hifzCount >= targetHifz;
+    const isRevisionOk = targetRevision === 0 || revisionCount >= targetRevision;
+    const isActive = isHifzOk && isRevisionOk;
+
     weeklyActivity.push({
       date: d.toISOString(),
       active: isActive

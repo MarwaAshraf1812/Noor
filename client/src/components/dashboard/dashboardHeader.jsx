@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
+import LevelUpModal from '../UI/LevelUpModal';
 import GemIMg from '../../assets/blue_gem.png';
 import defaultAvatar from '../../assets/avatar_green_boy.png';
+
+const getRankName = (lvl) => {
+  if (lvl <= 1) return 'بطل مبتدئ 🌱';
+  if (lvl <= 3) return 'مستكشف نور 🧭';
+  if (lvl <= 5) return 'حارس الصلوات 🛡️';
+  if (lvl <= 8) return 'بطل المساجد 🕌';
+  return 'فارس النور الخارق 👑';
+};
 
 export default function DashboardHeader() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showLevelUp, setShowLevelUp] = useState(false);
   
   const gemsCount = user?.gems?.total ?? user?.gems ?? 0;
   const avatarSrc = user?.avatar_url || defaultAvatar;
@@ -16,8 +26,19 @@ export default function DashboardHeader() {
   const greetingTitle = isGirl ? 'بطلة' : 'بطل';
 
   const level = user?.level ?? 1;
-  const currentLevelProgress = gemsCount % 500;
-  const levelPercentage = Math.round((currentLevelProgress / 500) * 100);
+  const currentLevelProgress = gemsCount % 1000;
+  const levelPercentage = Math.round((currentLevelProgress / 1000) * 100);
+
+  useEffect(() => {
+    const storedLevel = localStorage.getItem('noor_user_level');
+    if (storedLevel) {
+      const parsedStored = parseInt(storedLevel, 10);
+      if (level > parsedStored) {
+        setShowLevelUp(true);
+      }
+    }
+    localStorage.setItem('noor_user_level', String(level));
+  }, [level]);
 
   const handleLogout = async () => {
     await logout();
@@ -25,7 +46,7 @@ export default function DashboardHeader() {
   };
 
   return (
-    <header className="w-full flex justify-between items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 md:px-12 bg-white/40 backdrop-blur-sm border-b border-slate-100/80 select-none relative" dir="rtl">
+    <header className="w-full flex justify-between items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 md:px-12 bg-white/40 backdrop-blur-sm border-b z-50 border-slate-100/80 select-none relative" dir="rtl">
       
       <div className="flex items-center gap-2 sm:gap-3">
         <h2 className="text-base sm:text-2xl font-black text-[#3b82f6] tracking-tight flex items-center gap-1">
@@ -81,45 +102,57 @@ export default function DashboardHeader() {
       </div>
 
       <div className="flex items-center gap-1.5 sm:gap-3">
-        <div id="header-gems-badge" className="flex items-center gap-1 sm:gap-2 bg-blue-50/50 px-2 py-1 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-blue-100/50 shadow-sm hover:scale-105 transition-transform duration-200">
+        <div id="header-gems-badge" className="flex items-center gap-2 sm:gap-3 bg-blue-50/50 px-4 py-3 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl border border-blue-100/50 shadow-sm hover:scale-105 transition-transform duration-200">
           <img 
             src={GemIMg} 
             alt="جوهرة" 
-            className="w-4 h-4 sm:w-6 sm:h-6 object-contain animate-bounce" 
+            className="w-6 h-6 sm:w-8 sm:h-8 object-contain animate-bounce" 
           />
-          <span className="text-[#3b82f6] font-black text-sm sm:text-xl leading-none">
+          <span className="text-[#3b82f6] font-black text-lg sm:text-xl leading-none">
             {gemsCount}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-3 bg-amber-50/50 px-2 py-1 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-amber-100/50 shadow-sm hover:scale-105 transition-all duration-200">
-          <div className="relative flex items-center justify-center w-6 h-6 sm:w-10 sm:h-10 text-amber-500 hover:scale-110 transition-transform duration-200 shrink-0">
-            <svg className="absolute w-full h-full drop-shadow-[0_1.5px_3px_rgba(245,158,11,0.2)]" viewBox="0 0 24 24" fill="currentColor">
+        <div className="flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-amber-500/10 to-amber-600/5 px-2.5 py-1.5 sm:px-4 sm:py-2.5 rounded-2xl border-2 border-amber-200/60 shadow-sm hover:scale-[1.02] transition-all duration-200">
+          <div className="relative flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 text-amber-500 hover:scale-110 transition-transform duration-200 shrink-0">
+            <svg className="absolute w-full h-full drop-shadow-[0_2px_4px_rgba(245,158,11,0.3)]" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 .587l3.668 7.431 8.2 1.191-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.857 1.4-8.168L.132 9.209l8.2-1.191L12 .587z" />
             </svg>
-            <span className="absolute text-white font-black text-[9px] sm:text-sm z-10 pb-0.5">
+            <span className="absolute text-white font-black text-xs sm:text-base z-10 pb-0.5 drop-shadow-sm">
               {level}
             </span>
           </div>
 
           <div className="hidden min-[380px]:flex flex-col text-right justify-center">
-            <span className="text-amber-700 font-black text-[9px] sm:text-xs leading-none">
-              المستوى {level}
-            </span>
-            <div className="flex items-center gap-1 mt-0.5 sm:mt-1">
-              <div className="w-12 sm:w-24 h-1 sm:h-1.5 bg-amber-100 rounded-full overflow-hidden">
+            <div className="flex items-center gap-1.5">
+              <span className="text-amber-800 font-black text-xs sm:text-sm leading-none">
+                المستوى {level}
+              </span>
+              <span className="bg-amber-100 text-amber-800 text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md border border-amber-200/50">
+                {getRankName(level)}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <div className="w-16 sm:w-32 h-1.5 sm:h-2 bg-amber-100/60 rounded-full overflow-hidden border border-amber-200/20">
                 <div 
-                  className="h-full bg-amber-400 rounded-full transition-all duration-700 ease-out"
+                  className="h-full bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${levelPercentage}%` }}
                 />
               </div>
-              <span className="text-amber-600 font-extrabold text-[7px] sm:text-[9px] whitespace-nowrap">
-                {currentLevelProgress}/500
+              <span className="text-amber-600 font-extrabold text-[8px] sm:text-[10px] whitespace-nowrap">
+                {currentLevelProgress}/1000 XP
               </span>
             </div>
           </div>
         </div>
       </div>
+
+      <LevelUpModal
+        isOpen={showLevelUp}
+        onClose={() => setShowLevelUp(false)}
+        level={level}
+        rank={getRankName(level)}
+      />
 
     </header>
   );

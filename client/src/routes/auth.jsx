@@ -5,11 +5,11 @@ import Register from '../pages/Register';
 
 export const authRoutes = [
   {
-    path: '/auth',
+    path: '/auth/login',
     element: <AuthLayout />,
     children: [
       {
-        path: 'login',
+        index: true,
         element: <Login />,
       },
       {

@@ -135,11 +135,15 @@ export const updateActivityStreak = async(userId, activityType, tx = null) => {
   let shouldUpdateStreak = false;
 
   if (activityStreak.last_active_date) {
-    const lastActive = new Date(activityStreak.last_active_date);
-    lastActive.setHours(0, 0, 0, 0);
+    const offsetMs = 3 * 60 * 60 * 1000; // Middle East (Egypt/KSA) timezone offset (UTC+3)
+    const todayLocal = new Date(new Date().getTime() + offsetMs);
+    todayLocal.setUTCHours(0, 0, 0, 0);
 
-    const diffTime = Math.abs(today - lastActive);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const lastActiveLocal = new Date(new Date(activityStreak.last_active_date).getTime() + offsetMs);
+    lastActiveLocal.setUTCHours(0, 0, 0, 0);
+
+    const diffTime = Math.abs(todayLocal.getTime() - lastActiveLocal.getTime());
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
       // Same day: Already updated today

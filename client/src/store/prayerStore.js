@@ -22,7 +22,7 @@ const usePrayerStore = create((set, get) => ({
     }
   },
 
-  recordPrayer: async (prayerName, status, location, lat, lng) => {
+  recordPrayer: async (prayerName, status, location, dateStr = null, lat = null, lng = null) => {
     set({ loading: true, error: null });
     const latitude = lat ?? DEFAULT_LAT;
     const longitude = lng ?? DEFAULT_LNG;
@@ -31,6 +31,7 @@ const usePrayerStore = create((set, get) => ({
         prayerName,
         status,
         location: location || 'منزل',
+        dateStr,
         latitude,
         longitude
       });

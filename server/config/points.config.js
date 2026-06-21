@@ -29,6 +29,6 @@ export const POINTS_CONFIG = {
     DAY_30: 200,
   },
   LEVELS: {
-    THRESHOLD_PER_LEVEL: 500, // كل 500 جوهرة بيطلع لفل
+    THRESHOLD_PER_LEVEL: 1000, // كل 1000 جوهرة بيطلع لفل
   },
 };

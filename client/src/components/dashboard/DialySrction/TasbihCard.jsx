@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import useTasbihStore from '../../../store/tasbihStore';
 import TasbihCircle from './TasbihCircle';
+import CelebrationModal from '../../UI/CelebrationModal';
+import TiltCard from '../../UI/TiltCard';
 import { playPopSound, playChimeSound } from '../../../utils/audio';
 import { spawnFlyingGems } from '../../../utils/effects';
 
 export default function TasbihCard() {
   const { dashboardData, fetchDashboard, submitSession } = useTasbihStore();
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationConfig, setCelebrationConfig] = useState(null);
 
   const [localCounts, setLocalCounts] = useState({
     "الله أكبر": 0,
@@ -37,6 +41,17 @@ export default function TasbihCard() {
       if (event?.currentTarget) {
         spawnFlyingGems(event.currentTarget);
       }
+      setCelebrationConfig({
+        badgeText: '+5 جواهر',
+        title: `الحمد لله! أكملت التسبيح 📿`,
+        description: `لقد أتممت 33 مرة من ذكر "${displayName}"! حافظ على رطوبة لسانك بذكر الله.`,
+        stats: [
+          { value: '33/33', label: displayName, color: 'text-slate-700' },
+          { value: 'مستمر 🔥', label: 'الذكر اليومي', color: 'text-orange-600' },
+          { value: '+30', label: 'نقاط حسنات', color: 'text-[#3b82f6]' }
+        ]
+      });
+      setShowCelebration(true);
     } else {
       playPopSound();
     }
@@ -58,7 +73,7 @@ export default function TasbihCard() {
   };
 
   return (
-    <div className="w-full p-3.5 xs:p-5 sm:p-6 rounded-[24px] sm:rounded-[32px] bg-gradient-to-br from-[#A2E057] to-[#6BA82D] shadow-lg shadow-[#A2E057]/15 flex flex-col gap-3 sm:gap-4 select-none transition-all duration-300 ease-out hover:scale-[1.015] hover:shadow-xl hover:shadow-[#A2E057]/25" dir="rtl">
+    <TiltCard className="w-full p-3.5 xs:p-5 sm:p-6 rounded-[24px] sm:rounded-[32px] bg-gradient-to-br from-[#A2E057] to-[#6BA82D] shadow-lg shadow-[#A2E057]/15 flex flex-col gap-3 sm:gap-4 select-none">
       
       <h4 className="text-sm xs:text-base sm:text-xl font-black text-white text-center flex items-center justify-center gap-1 sm:gap-1.5">
         هيا بنا نجمع حسنات بالذكر! <span className="text-[#FFE54D] animate-pulse">✨</span>
@@ -96,6 +111,12 @@ export default function TasbihCard() {
         />
       </div>
 
-    </div>
+      <CelebrationModal
+        isOpen={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        {...celebrationConfig}
+      />
+
+    </TiltCard>
   );
 }

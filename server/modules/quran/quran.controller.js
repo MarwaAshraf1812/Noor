@@ -21,9 +21,11 @@ export const fetchQuranDashboard = async (req, res) => {
   try {
     const userId = req.user.userId;
     
-    const analytics = await getQuranAnalytics(userId);
-    const history = await getQuranHistory(userId, 10);
-    const currentSurah = await getCurrentSurahProgress(userId);
+    const [analytics, history, currentSurah] = await Promise.all([
+      getQuranAnalytics(userId),
+      getQuranHistory(userId, 10),
+      getCurrentSurahProgress(userId)
+    ]);
 
     res.status(200).json({
       analytics,

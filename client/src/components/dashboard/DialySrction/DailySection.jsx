@@ -4,6 +4,7 @@ import PrayerCard from './PrayerCard';
 import QuranCard from './QuranCard';
 import TasbihCard from './TasbihCard';
 import WelcomeNotification from './WelcomeNotification';
+import CelebrationModal from '../../UI/CelebrationModal';
 import useAuthStore from '../../../store/authStore';
 import usePrayerStore from '../../../store/prayerStore';
 import defaultAvatar from '../../../assets/avatar_green_boy.png';
@@ -13,10 +14,34 @@ export default function DailySection() {
   const user = useAuthStore((state) => state.user);
   const { dashboardData } = usePrayerStore();
   const [showNotification, setShowNotification] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationConfig, setCelebrationConfig] = useState(null);
   
   const completedCount = dashboardData?.completedCount ?? 0;
   const avatarSrc = user?.avatar_url || defaultAvatar;
   const level = user?.level ?? 1;
+
+  useEffect(() => {
+    if (completedCount === 5) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const key = `noor_salah_celebrated_${todayStr}`;
+      const alreadyShown = localStorage.getItem(key);
+      if (!alreadyShown) {
+        setCelebrationConfig({
+          badgeText: '+5 جواهر',
+          title: 'ما شاء الله! أتممت صلاتك',
+          description: 'صليت كل الصلوات الخمس اليوم. استمر وحافظ على هذه العادة الجميلة!',
+          stats: [
+            { value: '5/5', label: 'صلوات', color: 'text-slate-700' },
+            { value: `${dashboardData?.streak || 0} 🔥`, label: 'أيام متتالية', color: 'text-orange-600' },
+            { value: `+${(dashboardData?.streak || 0) * 10 || 50}`, label: 'نقطة', color: 'text-[#3b82f6]' }
+          ]
+        });
+        setShowCelebration(true);
+        localStorage.setItem(key, 'true');
+      }
+    }
+  }, [completedCount, dashboardData?.streak]);
 
   useEffect(() => {
     const hasShown = sessionStorage.getItem('noor_welcome_shown');
@@ -65,6 +90,12 @@ export default function DailySection() {
         avatarSrc={avatarSrc}
         level={level}
         message={getGreetingMessage()}
+      />
+
+      <CelebrationModal
+        isOpen={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        {...celebrationConfig}
       />
 
     </div>

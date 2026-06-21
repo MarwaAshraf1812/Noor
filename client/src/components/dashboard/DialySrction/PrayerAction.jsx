@@ -51,10 +51,14 @@ export default function PrayerAction({
 
         <button
           onClick={() => setShowLocationSelect(true)}
-          disabled={loading}
-          className="w-full max-w-[220px] py-3.5 sm:py-3 px-5 sm:px-6 bg-[#4ba0ff] hover:bg-[#3b82f6] text-white font-black rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center justify-center gap-2"
+          disabled={loading || !isGracePeriod}
+          className={`w-full max-w-[220px] py-3.5 sm:py-3 px-5 sm:px-6 font-black rounded-2xl transition-all duration-150 flex items-center justify-center gap-2 shadow-sm ${
+            (loading || !isGracePeriod)
+              ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300/30'
+              : 'bg-[#4ba0ff] hover:bg-[#3b82f6] text-white shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
+          }`}
         >
-          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={3} />
+          <CheckCircle className={`w-4 h-4 sm:w-5 sm:h-5 ${loading || !isGracePeriod ? 'text-slate-400' : 'text-white'}`} strokeWidth={3} />
           <span className="text-sm sm:text-base">صليت</span>
         </button>
       </div>
