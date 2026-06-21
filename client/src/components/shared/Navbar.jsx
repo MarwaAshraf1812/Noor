@@ -72,7 +72,7 @@ export const Navbar = () => {
           </nav>
 
           <div className="hidden md:flex items-center">
-            <Button to="/auth">
+            <Button to="/auth/login">
               دخول المغامرة
             </Button>
           </div>
