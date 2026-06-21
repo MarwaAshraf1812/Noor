@@ -17,8 +17,9 @@ COPY prisma.config.ts ./
 RUN npm ci
 
 # DATABASE_URL is required by prisma generate (reads prisma.config.ts)
-# Pass it as a build argument from the platform (Koyeb build args)
-ARG DATABASE_URL
+# We provide a default dummy connection string for build-time generation.
+# At runtime, HuggingFace/Koyeb secrets will override this.
+ARG DATABASE_URL="postgresql://dummyuser:dummypassword@localhost:5432/dummydb"
 ENV DATABASE_URL=${DATABASE_URL}
 
 # Generate Prisma Client from schema
