@@ -38,7 +38,6 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
     }
   }, [isOpen, defaultType, fetchSurahs]);
 
-  // Pre-populate or clear Surah when tab type or surah list changes
   useEffect(() => {
     if (isOpen && surahsList.length > 0) {
       if (type === 'HIFZ') {
@@ -52,13 +51,11 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
           }
         }
       }
-      // Switch to Revision or fallback -> clear input
       setSelectedSurah(null);
       setSearchQuery('');
     }
   }, [type, isOpen, surahsList]);
 
-  // Automatically match typed query to a surah in the list using normalized comparison
   useEffect(() => {
     if (!searchQuery) {
       setSelectedSurah(null);
