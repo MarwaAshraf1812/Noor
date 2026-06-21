@@ -3,15 +3,8 @@ import usePrayerStore from '../../../store/prayerStore';
 import DiamondProgress from '../../UI/DiamondProgress';
 import PrayerAction from './PrayerAction';
 import PrayerMascot from './PrayerMascot';
+import TiltCard from '../../UI/TiltCard';
 import { spawnFlyingGems } from '../../../utils/effects';
-
-const PRAYER_TIPS = [
-  "الوضوء بيمسح الذنوب مثل ما الماء ينظف التراب! 💧",
-  "الصلاة هي صلتك بالله سبحانه وتعالى، حافظ عليها لتسعد! ✨",
-  "صلاة الجماعة في المسجد تعادل سبعاً وعشرين درجة! 🕌",
-  "تبسمك في وجه أخيك صدقة، والصلوات تنير وجهك! 😊",
-  "الله يحب صلاتك في وقتها، بادر إليها فور الأذان! ⏰"
-];
 
 const prayerNamesAr = {
   Fajr: 'الفجر',
@@ -23,7 +16,6 @@ const prayerNamesAr = {
 
 export default function PrayerCard() {
   const { dashboardData, fetchDashboard, recordPrayer, loading } = usePrayerStore();
-  const [tipIndex, setTipIndex] = useState(0);
   const [showLocationSelect, setShowLocationSelect] = useState(false);
   const [countdownText, setCountdownText] = useState('');
   const [isGracePeriod, setIsGracePeriod] = useState(false);
@@ -36,8 +28,50 @@ export default function PrayerCard() {
     if (!dashboardData) {
       fetchDashboard().catch(e => console.error(e));
     }
-    setTipIndex(Math.floor(Math.random() * PRAYER_TIPS.length));
   }, [dashboardData, fetchDashboard]);
+
+  const getDynamicTip = () => {
+    if (!dashboardData) return "جاري التحميل يا بطل...";
+    if (completedCount === 5) {
+      return "مذهل! لقد صليت كل الصلوات الخمس اليوم، أنت بطل حقيقي ومستعد لمغامرات الغد! 🏆🌟";
+    }
+
+    const timeline = dashboardData.todayTimeline || {};
+    const prayersOrdered = ['Isha', 'Maghrib', 'Asr', 'Dhuhr', 'Fajr'];
+    let lastCompleted = null;
+    for (const key of prayersOrdered) {
+      if (timeline[key]?.status === 'COMPLETED') {
+        lastCompleted = { key, ...timeline[key] };
+        break;
+      }
+    }
+
+    if (lastCompleted) {
+      const nameAr = prayerNamesAr[lastCompleted.key];
+      let locAr = 'المنزل بمفردك';
+      let gems = 10;
+      if (lastCompleted.location === 'MOSQUE') {
+        locAr = 'المسجد 🕌';
+        gems = 20;
+      } else if (lastCompleted.location === 'CONGREGATION') {
+        locAr = 'البيت جماعة 👨‍👩‍👦';
+        gems = 15;
+      }
+      
+      if (isGracePeriod) {
+        return `حان الآن موعد صلاة ${nextPrayerNameAr}! هيا لنتوضأ ونصلي جماعة 🕌✨`;
+      }
+      return `ما شاء الله! صلاتك ${nameAr} في ${locAr} منحتك ${gems} جوهرة إضافية! 💎✨`;
+    }
+
+    if (isGracePeriod) {
+      return `حان الآن موعد صلاة ${nextPrayerNameAr}! هيا لنتوضأ ونصلي جماعة 🕌✨`;
+    }
+    if (nextPrayerNameAr) {
+      return `هيا يا بطل، اقترب أذان ${nextPrayerNameAr}! هل أنت مستعد للذهاب للمسجد؟ 🕌`;
+    }
+    return "الصلاة هي صلتك بالله سبحانه وتعالى، حافظ عليها لتسعد! ✨";
+  };
 
   useEffect(() => {
     if (!nextPrayer) return;
@@ -101,7 +135,7 @@ export default function PrayerCard() {
   };
 
   return (
-    <div className="w-full rounded-[24px] sm:rounded-3xl p-4 sm:p-6 bg-gradient-to-r from-[#557AA7] to-[#ACCCF2] shadow-xl shadow-blue-100/30 flex flex-col gap-4 sm:gap-6 select-none transition-all duration-300 hover:scale-[1.01] text-white" dir="rtl">
+    <TiltCard className="w-full rounded-[24px] sm:rounded-3xl p-4 sm:p-6 bg-gradient-to-r from-[#557AA7] to-[#ACCCF2] shadow-xl shadow-blue-100/30 flex flex-col gap-4 sm:gap-6 select-none text-white">
       
       <div className="w-full">
         <DiamondProgress />
@@ -122,10 +156,10 @@ export default function PrayerCard() {
           />
         </div>
 
-        <PrayerMascot tip={PRAYER_TIPS[tipIndex]} />
+        <PrayerMascot tip={getDynamicTip()} />
 
       </div>
 
-    </div>
+    </TiltCard>
   );
 }

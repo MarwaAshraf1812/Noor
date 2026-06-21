@@ -3,58 +3,112 @@ import { prisma } from "../../config/prisma.config.js";
 import { timeToMinutes, getStartOfToday, getLastSevenDays, formatDateToYYYYMMDD, getCurrentMinutes } from '../../utils/date.utils.js';
 import { getAllPrayerTimes, activePrayer } from '../../utils/prayerTimes.js';
 
-export const recordPrayer = async(userId, prayerName, status, location, latitude, longitude) => {
+export const recordPrayer = async(userId, prayerName, status, location, latitude, longitude, dateStr = null) => {
   return await prisma.$transaction(async(tx) => {
     const timings = await getAllPrayerTimes(latitude, longitude);
     const currentActive = activePrayer(timings);
-    const isOnTime = (currentActive === prayerName);
-
-
-    const prayerTimesInMinutes = timeToMinutes(timings[prayerName])
-    const currentMinutes = getCurrentMinutes();
     
-    if (currentMinutes < prayerTimesInMinutes) {
-      throw new Error("لا يمكنك تسجيل صلاة قبل موعدها!");
+    let targetDate = getStartOfToday();
+    let isTodayCheck = true;
+    if (dateStr) {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      targetDate = new Date(year, month - 1, day);
+      targetDate.setHours(0, 0, 0, 0);
+      
+      const todayStr = formatDateToYYYYMMDD(new Date());
+      isTodayCheck = (dateStr === todayStr);
     }
 
-    const today = getStartOfToday();
+    if (isTodayCheck) {
+      const prayerTimesInMinutes = timeToMinutes(timings[prayerName])
+      const currentMinutes = getCurrentMinutes();
+      
+      if (currentMinutes < prayerTimesInMinutes) {
+        throw new Error("لا يمكنك تسجيل صلاة قبل موعدها!");
+      }
+    }
+
+    const isOnTime = isTodayCheck && (currentActive === prayerName);
 
     const existingRecord = await tx.prayer.findFirst({
       where: {
         user_id: userId,
         prayer_name: prayerName,
-        date: today
+        date: targetDate
       }
     });
 
     if (existingRecord) {
-      // Logic for QADAA: Allow updating a MISSED prayer to QADAA
-      if (existingRecord.status === 'MISSED' && status === 'QADAA') {
-        const updatedRecord = await tx.prayer.update({
-          where: { id: existingRecord.id },
-          data: { status: 'QADAA', location }
+      const oldStatus = existingRecord.status;
+      const updatedRecord = await tx.prayer.update({
+        where: { id: existingRecord.id },
+        data: { status, location }
+      });
+
+      let dayCompleted = false;
+      let currentStreak = 0;
+      let gamification = null;
+
+      if (status === 'COMPLETED' && oldStatus !== 'COMPLETED' && oldStatus !== 'QADAA') {
+        const gemsAmount = calculateActivityGems('PRAYER', { location, onTime: isOnTime });
+        gamification = await handleGemsAndLevel(userId, gemsAmount, tx);
+        
+        const streakRecord = await updateActivityStreak(userId, 'PRAYER', tx);
+        currentStreak = streakRecord.streak_count;
+
+        // Check if Hero of the Day (5/5)
+        const countToday = await tx.prayer.count({
+          where: { user_id: userId, date: targetDate, status: 'COMPLETED' }
         });
+        if (countToday === 5) dayCompleted = true;
 
-        // Award gems for Qadaa (penalty is handled inside calculateActivityGems if onTime is false)
+        // Award Badge: فارس الفجر (Prayed Fajr on time for 7 days)
+        if (prayerName === 'Fajr') {
+          await checkAndAwardBadges(userId, 'فارس الفجر', async (db) => {
+            const sevenDaysAgo = new Date(targetDate);
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+            
+            const fajrCount = await db.prayer.count({
+              where: {
+                user_id: userId,
+                prayer_name: 'Fajr',
+                status: 'COMPLETED',
+                date: { gte: sevenDaysAgo }
+              }
+            });
+            return fajrCount >= 7;
+          }, tx);
+        }
+
+        // Award Badge: بطل الأسبوع (Prayer Streak hits 7 days)
+        if (currentStreak >= 7) {
+          await checkAndAwardBadges(userId, 'بطل الأسبوع', async () => true, tx);
+        }
+      } else if (status === 'QADAA' && oldStatus !== 'QADAA' && oldStatus !== 'COMPLETED') {
         const gemsAmount = calculateActivityGems('PRAYER', { location, onTime: false });
-        const gamificationResult = await handleGemsAndLevel(userId, gemsAmount, tx);
-
-        return { 
-          prayerRecord: updatedRecord, 
-          dayCompleted: false, 
-          streak: 0,
-          gamification: gamificationResult
-        };
+        gamification = await handleGemsAndLevel(userId, gemsAmount, tx);
       }
 
-      throw new Error(`لقد قمت بتسجيل صلاة ${prayerName} بالفعل لهذا اليوم!`);
+      const responsePayload = { 
+        prayerRecord: updatedRecord, 
+        dayCompleted, 
+        streak: currentStreak,
+        gamification
+      };
+
+      // Notify the user's connected devices to update their dashboard in real-time
+      import('../../config/socket.config.js').then(({ emitToUser }) => {
+         emitToUser(userId, 'dashboard_updated', responsePayload);
+      }).catch(e => console.error('Failed to emit dashboard update:', e));
+
+      return responsePayload;
     }
 
     const prayerRecord = await tx.prayer.create({
       data: {
         user_id: userId,
         prayer_name: prayerName,
-        date: today,
+        date: targetDate,
         status,
         location: location || null
       }
@@ -73,14 +127,14 @@ export const recordPrayer = async(userId, prayerName, status, location, latitude
 
       // 1. Check if Hero of the Day (5/5)
       const countToday = await tx.prayer.count({
-        where: { user_id: userId, date: today, status: 'COMPLETED' }
+        where: { user_id: userId, date: targetDate, status: 'COMPLETED' }
       });
       if (countToday === 5) dayCompleted = true;
 
       // 2. Award Badge: فارس الفجر (Prayed Fajr on time for 7 days)
       if (prayerName === 'Fajr') {
         await checkAndAwardBadges(userId, 'فارس الفجر', async (db) => {
-          const sevenDaysAgo = new Date(today);
+          const sevenDaysAgo = new Date(targetDate);
           sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
           
           const fajrCount = await db.prayer.count({
@@ -179,7 +233,7 @@ export const getPrayerDashboardData = async (userId, latitude, longitude) => {
     
     weeklyGrid[dateKey] = {};
     prayerNames.forEach(name => {
-      const record = prayers.find(p => p.date.toISOString().split('T')[0] === dateKey && p.prayer_name === name);
+      const record = prayers.find(p => formatDateToYYYYMMDD(p.date) === dateKey && p.prayer_name === name);
       weeklyGrid[dateKey][name] = record ? { status: record.status, location: record.location } : { status: 'PENDING' };
     });
   }

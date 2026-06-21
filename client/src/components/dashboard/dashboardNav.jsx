@@ -41,7 +41,7 @@ export default function DashboardNav({ activeTab, setActiveTab }) {
 
   return (
     <>
-      <div className="hidden sm:flex w-full justify-center py-6 bg-white/40 border-b border-slate-100/50">
+      <div className="hidden sm:flex w-full justify-center py-2 bg-transparent">
         <nav className="flex items-center gap-4 sm:gap-6 md:gap-8 justify-center select-none bg-transparent" dir="rtl">
           {tabs.map((tab) => (
             <button

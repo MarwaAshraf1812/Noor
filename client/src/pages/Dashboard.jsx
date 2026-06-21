@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import DashboardHeader from '../components/dashboard/dashboardHeader';
 import DashboardNav from '../components/dashboard/dashboardNav';
 import DailySection from '../components/dashboard/DialySrction/DailySection';
-import PrayerSection from '../components/dashboard/prayerSection';
-import QuranSection from '../components/dashboard/QuranSection';
-import TasbihSection from '../components/dashboard/TasbihSection';
-import AdhkarSection from '../components/dashboard/AdhkarSection';
+import PrayerSection from '../components/dashboard/PrayerSection/prayerSection';
+import QuranSection from '../components/dashboard/QuranSection/QuranSection';
+import TasbihSection from '../components/dashboard/TasbihSection/TasbihSection';
+import AdhkarSection from '../components/dashboard/AdhkarSection/AdhkarSection';
 
 export const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('yomy');

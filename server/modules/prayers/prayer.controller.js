@@ -5,13 +5,13 @@ import { scheduleDailyReminders } from './notification.service.js';
 export const recordPrayerHandler = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const { prayerName, status, location, latitude, longitude } = req.body;
+    const { prayerName, status, location, latitude, longitude, dateStr } = req.body;
 
     if (!prayerName || !status || !latitude || !longitude) {
       return res.status(400).json({ message: "يرجى توفير جميع البيانات المطلوبة (prayerName, status, latitude, longitude)" });
     }
 
-    const result = await recordPrayer(userId, prayerName, status, location, latitude, longitude);
+    const result = await recordPrayer(userId, prayerName, status, location, latitude, longitude, dateStr);
 
     res.status(200).json({
       message: "تم تسجيل الصلاة بنجاح!",
