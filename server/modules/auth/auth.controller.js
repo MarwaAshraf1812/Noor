@@ -13,8 +13,16 @@ export const register = async(req, res) => {
       return res.status(400).json({success: false, message: error.details[0].message});
     }
 
-    const user = await authService.registerNewUser(value);
-    res.status(201).json({success: true, message: "تم تسجيل الحساب بنجاح", user});
+    const { user, token } = await authService.registerNewUser(value);
+    
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict"
+    });
+
+    res.status(201).json({success: true, message: "تم تسجيل الحساب بنجاح", user, token});
     
   } catch (error) {
     res.status(400).json({success: false, message: error.message || "حدث خطأ أثناء تسجيل الحساب"});
@@ -42,7 +50,7 @@ export const login = async(req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict"
     });
 
-    res.status(200).json({success: true, message: "تم تسجيل الدخول بنجاح", user});
+    res.status(200).json({success: true, message: "تم تسجيل الدخول بنجاح", user, token});
   } catch (error) {
     res.status(400).json({success: false, message: error.message || "حدث خطأ أثناء تسجيل الدخول"});
   }

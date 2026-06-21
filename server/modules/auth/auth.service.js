@@ -28,7 +28,15 @@ export const registerNewUser = async (userData) => {
         gems: true
       }
     });
-    return newUser;
+    const token = jwt.sign(
+      {userId: newUser.id, email: newUser.email},
+      process.env.JWT_SECRET,
+      {expiresIn: '7d'}
+    );
+
+    const { password: _, ...userWithoutPassword } = newUser;
+
+    return { user: userWithoutPassword, token };
   } catch (error) {
     throw error;
   }
