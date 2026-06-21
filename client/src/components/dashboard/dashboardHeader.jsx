@@ -80,7 +80,7 @@ export default function DashboardHeader() {
                 onClick={() => setShowDropdown(false)}
               />
               
-              <div className="absolute left-0 sm:right-0 mt-2 w-48 bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl shadow-xl z-40 py-2 text-right">
+              <div className="absolute left-auto right-0 mt-2 w-48 bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl shadow-xl z-40 py-2 text-right">
                 <div className="px-4 py-2 border-b border-slate-100">
                   <p className="text-sm font-black text-slate-800">{user?.name || 'عمر'}</p>
                   <p className="text-xs text-slate-400 font-bold mt-0.5">المستوى {user?.level || 1}</p>

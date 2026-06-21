@@ -47,7 +47,7 @@ export default function DashboardProgress() {
 
   return (
     <div className="w-full flex justify-center items-center py-0.5 sm:py-2 select-none" dir="rtl">
-      <div className="w-full max-w-4xl grid grid-cols-3 sm:grid-cols-5 gap-y-5 gap-x-2 sm:gap-6 px-2 justify-items-center">
+      <div className="w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-y-5 gap-x-2 sm:gap-6 px-2 justify-items-center">
         <div className="flex flex-col items-center">
           <CircularProgress
             percentage={prayerPercentage}
@@ -75,22 +75,6 @@ export default function DashboardProgress() {
           />
           {adhkarPercentage === 100 && (
             <span className="mt-2 text-[10px] sm:text-xs font-black text-lime-600 bg-lime-50/80 px-2 py-0.5 rounded-full select-none">
-              تم! 🎉
-            </span>
-          )}
-        </div>
-
-        <div className="flex flex-col items-center">
-          <CircularProgress
-            percentage={tasbihPercentage}
-            color="#a855f7"
-            trailColor="#a855f7"
-            label="التسبيح"
-            sublabel={tasbihSublabel}
-            size="w-24 h-24 min-[390px]:w-28 min-[390px]:h-28 sm:w-28 sm:h-28 md:w-32 md:h-32"
-          />
-          {tasbihPercentage === 100 && (
-            <span className="mt-2 text-[10px] sm:text-xs font-black text-purple-600 bg-purple-50/80 px-2 py-0.5 rounded-full select-none">
               تم! 🎉
             </span>
           )}
