@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import useTasbihStore from '../../../store/tasbihStore';
 import TasbihCircle from './TasbihCircle';
 import CelebrationModal from '../../UI/CelebrationModal';
@@ -17,21 +17,57 @@ export default function TasbihCard() {
     "الحمدلله": 0
   });
 
+  const pendingUpdates = useRef({
+    "الله أكبر": { count: 0, completed: false, timeout: null },
+    "سبحان الله": { count: 0, completed: false, timeout: null },
+    "الحمدلله": { count: 0, completed: false, timeout: null }
+  });
+
+  const inFlightUpdates = useRef({
+    "الله أكبر": 0,
+    "سبحان الله": 0,
+    "الحمدلله": 0
+  });
+
   useEffect(() => {
     fetchDashboard().catch(e => console.error(e));
   }, [fetchDashboard]);
 
   useEffect(() => {
     if (dashboardData?.todayProgress) {
-      setLocalCounts({
-        "الله أكبر": dashboardData.todayProgress["الله أكبر"] || 0,
-        "سبحان الله": dashboardData.todayProgress["سبحان الله"] || 0,
-        "الحمدلله": dashboardData.todayProgress["الحمدلله"] || 0
+      setLocalCounts(prev => {
+        const getMergedCount = (dbName) => {
+          const serverCount = dashboardData.todayProgress[dbName] || 0;
+          const pendingCount = pendingUpdates.current[dbName]?.count || 0;
+          const inFlightCount = inFlightUpdates.current[dbName] || 0;
+          return Math.max(prev[dbName], serverCount + pendingCount + inFlightCount);
+        };
+        return {
+          "الله أكبر": getMergedCount("الله أكبر"),
+          "سبحان الله": getMergedCount("سبحان الله"),
+          "الحمدلله": getMergedCount("الحمدلله")
+        };
       });
     }
   }, [dashboardData]);
 
-  const handleIncrement = async (displayName, dbName, event) => {
+  useEffect(() => {
+    const currentPending = pendingUpdates.current;
+    return () => {
+      Object.entries(currentPending).forEach(([dbName, data]) => {
+        if (data.timeout) {
+          clearTimeout(data.timeout);
+          if (data.count > 0) {
+            submitSession(dbName, data.count, data.completed).catch(e => 
+              console.error('Failed to flush tasbih update on unmount:', e)
+            );
+          }
+        }
+      });
+    };
+  }, [submitSession]);
+
+  const handleIncrement = (displayName, dbName, event) => {
     const currentCount = localCounts[dbName] || 0;
     const newCount = currentCount + 1;
     const isCompleted = newCount > 0 && newCount % 33 === 0;
@@ -61,15 +97,33 @@ export default function TasbihCard() {
       [dbName]: newCount
     }));
 
-    try {
-      await submitSession(dbName, 1, isCompleted);
-    } catch (err) {
-      console.error('Failed to submit tasbih increment:', err);
-      setLocalCounts(prev => ({
-        ...prev,
-        [dbName]: currentCount
-      }));
+    pendingUpdates.current[dbName].count += 1;
+    if (isCompleted) {
+      pendingUpdates.current[dbName].completed = true;
     }
+
+    if (pendingUpdates.current[dbName].timeout) {
+      clearTimeout(pendingUpdates.current[dbName].timeout);
+    }
+
+    pendingUpdates.current[dbName].timeout = setTimeout(async () => {
+      const { count, completed } = pendingUpdates.current[dbName];
+      pendingUpdates.current[dbName] = { count: 0, completed: false, timeout: null };
+
+      inFlightUpdates.current[dbName] += count;
+
+      try {
+        await submitSession(dbName, count, completed);
+      } catch (err) {
+        console.error('Failed to submit tasbih increment:', err);
+        setLocalCounts(prev => ({
+          ...prev,
+          [dbName]: Math.max(0, prev[dbName] - count)
+        }));
+      } finally {
+        inFlightUpdates.current[dbName] = Math.max(0, inFlightUpdates.current[dbName] - count);
+      }
+    }, 1500);
   };
 
   return (

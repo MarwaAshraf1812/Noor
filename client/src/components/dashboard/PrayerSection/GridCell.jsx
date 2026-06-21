@@ -4,18 +4,9 @@ import gemRed from '../../../assets/Diamond red.png';
 import { playTickSound } from '../../../utils/audio';
 
 const GridCell = memo(({ day, prayer, dayData, record, onCellClick, todayStr, nextPrayer }) => {
-  const getDayPosition = (key) => {
-    if (key === 6) return 0;
-    return key + 1;
-  };
-
-  const todayKey = new Date().getDay();
-  const todayPos = getDayPosition(todayKey);
-  const dayPos = getDayPosition(day.key);
-  
-  const isPast = dayPos < todayPos;
-  const isToday = dayPos === todayPos;
-  const isFutureDay = dayPos > todayPos;
+  const isPast = dayData?.dateStr ? dayData.dateStr < todayStr : false;
+  const isToday = dayData?.dateStr ? dayData.dateStr === todayStr : false;
+  const isFutureDay = dayData?.dateStr ? dayData.dateStr > todayStr : false;
 
   const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
   const nextPrayerName = nextPrayer?.name;
@@ -32,7 +23,7 @@ const GridCell = memo(({ day, prayer, dayData, record, onCellClick, todayStr, ne
   const isFuture = isFutureDay || isTodayPrayerFuture;
   const isCompleted = record?.status === 'COMPLETED' || record?.status === 'QADAA';
   
-  const isMissed = record?.status === 'MISSED' || (isPast && !isCompleted);
+  const isMissed = !isFuture && (record?.status === 'MISSED' || (isPast && !isCompleted));
   const isPending = !isCompleted && !isMissed;
   
   const isActive = !isFuture;

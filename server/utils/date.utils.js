@@ -32,5 +32,6 @@ export const formatDateToYYYYMMDD = (date) => {
 export const getCurrentMinutes = (timezone = 'Africa/Cairo') => {
   const nowStr = new Date().toLocaleString("en-US", { timeZone: timezone, hour12: false, hour: '2-digit', minute: '2-digit' });
   const [hours, minutes] = nowStr.split(':').map(Number);
-  return hours * 60 + minutes;
+  return (hours % 24) * 60 + minutes;
 };
+

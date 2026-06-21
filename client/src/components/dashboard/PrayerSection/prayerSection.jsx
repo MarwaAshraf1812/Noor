@@ -34,18 +34,26 @@ export default function PrayerSection() {
   const weeklyDataMapped = useMemo(() => {
     if (!dashboardData?.weeklyGrid) return {};
     
+    // Find current week's Saturday (week starts on Saturday, ends on Friday)
+    const todayObj = new Date();
+    const day = todayObj.getDay();
+    const offset = day === 6 ? 0 : day + 1;
+    const sat = new Date(todayObj);
+    sat.setDate(sat.getDate() - offset);
+    
     const mapped = {};
-    Object.entries(dashboardData.weeklyGrid).forEach(([dateStr, prayers]) => {
-      const [year, month, day] = dateStr.split('-').map(Number);
-      const dateObj = new Date(year, month - 1, day);
-      const dayIndex = dateObj.getDay();
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(sat);
+      d.setDate(d.getDate() + i);
+      const dateStr = getLocalDateString(d);
+      const dayIndex = d.getDay();
       
       mapped[dayIndex] = {
         dateStr,
-        prayers,
+        prayers: dashboardData.weeklyGrid[dateStr] || {},
         isToday: dateStr === todayStr
       };
-    });
+    }
     return mapped;
   }, [dashboardData?.weeklyGrid, todayStr]);
 
