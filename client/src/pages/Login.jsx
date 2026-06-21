@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import authServices from '../services/authServices';
+import { getBaseURL } from '../services/api';
 import Button from '../components/UI/Button';
 import Input from '../components/UI/Input';
 import noorLoginImg from '../assets/noor_login.png';
@@ -111,7 +112,7 @@ export default function Login() {
                 variant="outline"
                 className="w-full py-3.5 border-slate-200 text-slate-600 flex items-center justify-center gap-2 hover:bg-slate-50"
                 onClick={() => {
-                  window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'}/auth/google`;
+                  window.location.href = `${getBaseURL()}/auth/google`;
                 }}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
