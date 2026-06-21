@@ -184,9 +184,26 @@ export const MissedPrayers = async(userId, latitude, longitude, tx = null) => {
   const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
   const currentIndex = prayers.indexOf(currentActive);
-  const pastPrayers = prayers.slice(0, currentIndex); 
+  const currentTime = getCurrentMinutes(timezone);
+  const fajrTime = timeToMinutes(timings.Fajr);
+
+  // If we are before Fajr (e.g. between midnight and Fajr), no prayers of today are past yet.
+  let pastPrayers = [];
+  if (currentTime >= fajrTime) {
+    pastPrayers = prayers.slice(0, currentIndex);
+  }
 
   const today = getStartOfToday(timezone);
+
+  // Clean up any incorrect MISSED records for today (e.g. created after midnight but before Fajr)
+  await db.prayer.deleteMany({
+    where: {
+      user_id: userId,
+      date: today,
+      status: "MISSED",
+      prayer_name: { notIn: pastPrayers }
+    }
+  });
 
   const recordedPrayers = await db.prayer.findMany({
     where: {user_id: userId, date: today}
