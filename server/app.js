@@ -15,19 +15,7 @@ const extraOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    try {
-      const url = new URL(origin);
-      const isLocalhost = url.hostname === "localhost" || url.hostname === "127.0.0.1";
-      const isVercel = url.hostname.endsWith(".vercel.app");
-      const isAllowed = extraOrigins.includes(origin);
-      if (isLocalhost || isVercel || isAllowed) {
-        return callback(null, true);
-      }
-    } catch (e) {
-      // invalid URL format, ignore
-    }
-    return callback(new Error("Not allowed by CORS"));
+    callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
