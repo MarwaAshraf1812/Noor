@@ -21,7 +21,8 @@
   "type": "module",
   "scripts": {
     "build": "prisma generate",
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
