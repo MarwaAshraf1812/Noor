@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String  @id @default(uuid())
+  name         String
+  email        String  @unique
+  avatar_url   String?
+  password     String
+  level        Int     @default(1)
+  daily_hifz_target     Int @default(5)
+  daily_revision_target Int @default(15)
+
+
+  created_at DateTime @default(now())
+
+  //relations
+  prayers         Prayer[]
+  quran_session   QuranSession[]
+  adhkar          AdhkarProgress[]
+  tasbih_sessions TasbihSession[]
+  gems             Gems?
+  activity_streaks ActivityStreak[]
+  achievements     Achievement[]
+}
+
+model Prayer {
+  id          String       @id @default(uuid())
+  user_id     String
+  prayer_name String
+  date        DateTime
+  status      PrayerStatus @default(PENDING)
+  location    locationType?
+
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, prayer_name, date])
+}
+
+model AdhkarProgress {
+  id       String   @id @default(uuid())
+  user_id  String
+  category AdhkarCategory
+  date     DateTime @db.Date
+
+  completed Boolean @default(false)
+
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, category, date])
+}
+
+model QuranSession {
+  id          String      @id @default(uuid())
+  user_id     String
+  type        SessionType
+  surah_name  String
+  verse_count Int
+  date        DateTime    @db.Date
+
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model TasbihSession {
+  id           String   @id @default(uuid())
+  user_id      String
+  tasbih_name  String
+  tasbih_count Int      @default(0)
+  completed    Boolean  @default(false)
+  date         DateTime
+
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Gems {
+  id      String @id @default(uuid())
+  user_id String @unique
+  total   Int    @default(0)
+
+  updated_at DateTime @updatedAt
+
+  // relation
+  user User @relation(fields: [user_id], references: [id])
+}
+
+enum PrayerStatus {
+  PENDING
+  MISSED
+  COMPLETED
+  QADAA
+}
+
+enum SessionType {
+  HIFZ
+  REVISION
+}
+
+enum locationType {
+  HOME
+  MOSQUE
+  CONGREGATION
+}
+
+enum AdhkarCategory {
+  MORNING
+  NIGHT
+  SLEEP
+  EATING
+}
+
+enum ActivityType {
+  PRAYER
+  QURAN
+  TASBIH
+  ADHKAR
+}
+
+model ActivityStreak {
+  id               String       @id @default(uuid())
+  user_id          String
+  activity_type    ActivityType
+  streak_count     Int          @default(0)
+  last_active_date DateTime?
+  
+  user User @relation(fields: [user_id], references: [id])
+  @@unique([user_id, activity_type])
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  user_id     String
+  badge_name  String
+  earned_at   DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+  @@unique([user_id, badge_name])
+}
