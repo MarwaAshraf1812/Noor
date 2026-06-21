@@ -6,6 +6,7 @@ import { X, Check, Sparkles } from 'lucide-react';
 import CelebrationModal from '../../UI/CelebrationModal';
 import SurahSelector from './SurahSelector';
 import VerseCounter from './VerseCounter';
+import { normalizeArabic } from '../../../utils/normalize';
 
 export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' }) {
   const { surahsList, fetchSurahs, submitSession } = useQuranStore();
@@ -67,7 +68,8 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
   };
 
   const handleQuickSelect = (searchKey) => {
-    const found = surahsList.find(s => s.name.includes(searchKey));
+    const normKey = normalizeArabic(searchKey);
+    const found = surahsList.find(s => normalizeArabic(s.name).includes(normKey));
     if (found) {
       handleSelectSurah(found);
     } else {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
+import { normalizeArabic } from '../../../utils/normalize';
 
 export default function SurahSelector({
   surahsList,
@@ -14,10 +15,12 @@ export default function SurahSelector({
   handleQuickSelect,
   activeTheme
 }) {
-  const filteredSurahs = surahsList.filter(s =>
-    s.name.includes(searchQuery) ||
-    s.englishName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredSurahs = surahsList.filter(s => {
+    const normName = normalizeArabic(s.name);
+    const normSearch = normalizeArabic(searchQuery);
+    return normName.includes(normSearch) ||
+           s.englishName.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <div className="relative">

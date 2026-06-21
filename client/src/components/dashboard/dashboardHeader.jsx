@@ -50,11 +50,11 @@ export default function DashboardHeader() {
       
       <div className="flex items-center gap-2 sm:gap-3">
         <h2 className="text-base sm:text-2xl font-black text-[#3b82f6] tracking-tight flex items-center gap-1">
-          <span>مرحبا يا {greetingTitle}</span>
+          <span className="hidden sm:inline">مرحبا يا {greetingTitle}</span>
           <span className="text-[#f59e0b] inline-block max-w-[70px] sm:max-w-none truncate align-bottom">
             {user?.name || 'عمر'}
           </span>
-          <span>!</span>
+          <span className="hidden sm:inline">!</span>
         </h2>
         
         <div className="relative shrink-0">
@@ -102,7 +102,7 @@ export default function DashboardHeader() {
       </div>
 
       <div className="flex items-center gap-1.5 sm:gap-3">
-        <div id="header-gems-badge" className="flex items-center gap-2 sm:gap-3 bg-blue-50/50 px-4 py-3 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl border border-blue-100/50 shadow-sm hover:scale-105 transition-transform duration-200">
+        <div id="header-gems-badge" className="flex items-center gap-2 sm:gap-3 bg-blue-50/50 px-2.5 py-1.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl border border-blue-100/50 shadow-sm hover:scale-105 transition-transform duration-200">
           <img 
             src={GemIMg} 
             alt="جوهرة" 
@@ -123,7 +123,7 @@ export default function DashboardHeader() {
             </span>
           </div>
 
-          <div className="hidden min-[380px]:flex flex-col text-right justify-center">
+          <div className="hidden sm:flex flex-col text-right justify-center">
             <div className="flex items-center gap-1.5">
               <span className="text-amber-800 font-black text-xs sm:text-sm leading-none">
                 المستوى {level}
