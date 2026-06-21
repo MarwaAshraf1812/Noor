@@ -21,9 +21,12 @@ const GridCell = memo(({ day, prayer, dayData, record, onCellClick, todayStr, ne
   const nextPrayerName = nextPrayer?.name;
   let isTodayPrayerFuture = false;
   if (isToday && nextPrayerName) {
-    const nextPrayerIndex = prayerNames.indexOf(nextPrayerName);
-    const thisPrayerIndex = prayerNames.indexOf(prayer.key);
-    isTodayPrayerFuture = thisPrayerIndex >= nextPrayerIndex;
+    const isTomorrowFajr = nextPrayerName === 'Fajr' && new Date().getHours() >= 6;
+    if (!isTomorrowFajr) {
+      const nextPrayerIndex = prayerNames.indexOf(nextPrayerName);
+      const thisPrayerIndex = prayerNames.indexOf(prayer.key);
+      isTodayPrayerFuture = thisPrayerIndex >= nextPrayerIndex;
+    }
   }
 
   const isFuture = isFutureDay || isTodayPrayerFuture;
