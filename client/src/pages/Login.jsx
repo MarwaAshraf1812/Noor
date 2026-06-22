@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import authServices from '../services/authServices';
@@ -17,6 +17,40 @@ export default function Login() {
   
   const setUser = useAuthStore((state) => state.setUser);
   const navigate = useNavigate();
+
+  const handleGoogleLogin = () => {
+    /* global google */
+    if (typeof google !== 'undefined') {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "741420309323-b29fptg10lt95h2bcr1q7284n8r8jb2b.apps.googleusercontent.com",
+        scope: 'openid email profile',
+        callback: async (tokenResponse) => {
+          if (tokenResponse && tokenResponse.access_token) {
+            setLoading(true);
+            setEmailError('');
+            setPasswordError('');
+            try {
+              const res = await authServices.googleLogin(tokenResponse.access_token, false);
+              setUser(res.data.user);
+              if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
+              }
+              navigate('/dashboard');
+            } catch (err) {
+              console.error("Google login failed:", err);
+              const msg = err.response?.data?.message || 'فشل تسجيل الدخول باستخدام جوجل';
+              setEmailError(msg);
+            } finally {
+              setLoading(false);
+            }
+          }
+        },
+      });
+      client.requestAccessToken();
+    } else {
+      setEmailError("تعذر الاتصال بخدمة جوجل حالياً. تأكدي من اتصالك بالإنترنت أو أعد المحاولة.");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -110,8 +144,10 @@ export default function Login() {
 
               <Button
                 variant="outline"
-                disabled
-                className="w-full py-3.5 border-slate-200 text-slate-400 flex items-center justify-center gap-2 cursor-not-allowed opacity-60"
+                type="button"
+                disabled={loading}
+                onClick={handleGoogleLogin}
+                className="w-full py-3.5 border-slate-200 text-slate-600 flex items-center justify-center gap-2 hover:bg-slate-50 transition-all rounded-xl font-bold"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path

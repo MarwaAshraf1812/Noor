@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
@@ -32,6 +32,39 @@ export default function Register() {
   
   const setUser = useAuthStore((state) => state.setUser);
   const navigate = useNavigate();
+
+  const handleGoogleLogin = () => {
+    /* global google */
+    if (typeof google !== 'undefined') {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "741420309323-b29fptg10lt95h2bcr1q7284n8r8jb2b.apps.googleusercontent.com",
+        scope: 'openid email profile',
+        callback: async (tokenResponse) => {
+          if (tokenResponse && tokenResponse.access_token) {
+            setLoading(true);
+            setError('');
+            try {
+              const res = await authServices.googleLogin(tokenResponse.access_token, true);
+              setUser(res.data.user);
+              if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
+              }
+              navigate('/dashboard');
+            } catch (err) {
+              console.error("Google registration failed:", err);
+              const msg = err.response?.data?.message || 'فشل إنشاء الحساب باستخدام جوجل';
+              setError(msg);
+            } finally {
+              setLoading(false);
+            }
+          }
+        },
+      });
+      client.requestAccessToken();
+    } else {
+      setError("تعذر الاتصال بخدمة جوجل حالياً. تأكدي من اتصالك بالإنترنت أو أعد المحاولة.");
+    }
+  };
 
   const avatarsList = [
     { id: 'green_boy', img: avatarGreenBoy },
@@ -143,9 +176,24 @@ export default function Register() {
                     required
                   />
 
-                  <div className="pt-2">
+                  <div className="pt-2 space-y-3">
                     <Button type="submit" className="w-full py-3.5 text-base sm:text-lg">
                       نتعرف على بطلنا
+                    </Button>
+                    <Button
+                      variant="outline"
+                      type="button"
+                      disabled={loading}
+                      onClick={handleGoogleLogin}
+                      className="w-full py-3.5 border-slate-200 text-slate-600 flex items-center justify-center gap-2 hover:bg-slate-50 transition-all rounded-xl font-bold"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                          fill="#EA4335"
+                          d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.486 0-6.313-2.827-6.313-6.313s2.827-6.313 6.313-6.313c1.554 0 2.972.56 4.078 1.488l3.125-3.126C18.91 1.95 15.82 1 12.24 1c-6.075 0-11 4.925-11 11s4.925 11 11 11c5.83 0 10.74-4.22 10.74-11 0-.67-.06-1.345-.19-1.928H12.24z"
+                        />
+                      </svg>
+                      <span>تسجيل حساب بجوجل</span>
                     </Button>
                   </div>
                 </form>

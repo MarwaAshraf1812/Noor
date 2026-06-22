@@ -15,6 +15,7 @@ router.post("/register", authController.register);
 @access  Public
 */
 router.post("/login", authController.login);
+router.post("/google", authController.googleLogin);
 
 /*
 @route   POST /api/auth/logout

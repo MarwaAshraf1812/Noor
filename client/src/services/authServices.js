@@ -13,6 +13,9 @@ const authServices = {
     me(){
         return api.get('/auth/me')
     },
+    googleLogin(token, isRegister = false){
+        return api.post('/auth/google', { token, isRegister })
+    },
 };
 
 export default authServices;

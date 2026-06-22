@@ -110,7 +110,7 @@ export const Navbar = () => {
             ))}
             <div className="pt-2">
               <Button 
-                to="/auth" 
+                to="/auth/login" 
                 className="w-full" 
                 onClick={() => setIsMobileMenuOpen(false)}
               >

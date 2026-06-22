@@ -79,3 +79,25 @@ export const getMe = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { token: googleToken, isRegister } = req.body;
+    if (!googleToken) {
+      return res.status(400).json({ success: false, message: "توكن جوجل مطلوب" });
+    }
+
+    const { user, token } = await authService.loginWithGoogle(googleToken, isRegister);
+    
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict"
+    });
+
+    res.status(200).json({ success: true, message: "تم تسجيل الدخول بجوجل بنجاح", user, token });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message || "حدث خطأ أثناء تسجيل الدخول بجوجل" });
+  }
+};
