@@ -14,7 +14,7 @@ export const getBaseURL = () => {
 
 const api = axios.create({
   baseURL: getBaseURL(),
-  withCredentials: true,
+  withCredentials: false,
 });
 
 api.interceptors.request.use(
