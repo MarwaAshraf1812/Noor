@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../../store/authStore';
 import authServices from '../../services/authServices';
@@ -31,7 +32,6 @@ export default function EditProfileModal({ isOpen, onClose }) {
   useEffect(() => {
     if (user) {
       setName(user.name || '');
-      // Match current avatar_url with one of the local assets
       if (user.avatar_url) {
         const found = avatarsList.find(a => user.avatar_url.includes(a.img));
         if (found) {
@@ -71,97 +71,94 @@ export default function EditProfileModal({ isOpen, onClose }) {
     }
   };
 
-  return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" dir="rtl">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm"
-        />
+  return createPortal(
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-md" 
+      dir="rtl"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 30 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 30 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-[28px] sm:rounded-[36px] p-6 sm:p-8 w-full max-w-[92%] sm:max-w-md shadow-2xl border-4 border-blue-100 relative select-none text-right overflow-hidden"
+      >
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-100/30 rounded-full blur-2xl pointer-events-none"></div>
+        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-yellow-100/30 rounded-full blur-2xl pointer-events-none"></div>
 
-        {/* Modal Content */}
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-          className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 relative z-10 select-none text-right"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl sm:text-2xl font-black text-[#3b82f6]">
-              تعديل بيانات البطل ✏️
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer text-2xl font-bold"
-            >
-              ✕
-            </button>
+        <div className="flex justify-between items-center mb-5 sm:mb-6 relative z-10">
+          <h2 className="text-xl sm:text-2xl font-black text-[#3b82f6]">
+            تعديل بيانات البطل ✏️
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer text-xl sm:text-2xl font-bold bg-slate-50 hover:bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-150"
+          >
+            ✕
+          </button>
+        </div>
+
+        {error && (
+          <div className="p-3 mb-4 bg-red-50 border-2 border-red-100 text-red-600 font-bold text-sm rounded-2xl relative z-10">
+            ⚠️ {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSave} className="space-y-4 sm:space-y-6 relative z-10">
+          <Input
+            label="اسم البطل"
+            id="heroName"
+            type="text"
+            placeholder="مثلاً: البطل عمر"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+
+          <div className="space-y-3">
+            <label className="text-[#1e3a8a] font-bold text-sm block">
+              اختر رفيقك في الرحلة 💫
+            </label>
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 max-w-xs sm:max-w-sm mx-auto justify-items-center">
+              {avatarsList.map((avatar) => (
+                <motion.button
+                  key={avatar.id}
+                  type="button"
+                  onClick={() => setSelectedAvatar(avatar.img)}
+                  className={`w-14 h-14 xs:w-16 sm:w-20 h-14 xs:h-16 sm:h-20 rounded-full overflow-hidden border-4 cursor-pointer focus:outline-none transition-all duration-200 ${
+                    selectedAvatar === avatar.img 
+                      ? 'border-blue-500 ring-4 ring-blue-100 scale-105 shadow-md shadow-blue-100' 
+                      : 'border-white hover:border-slate-100 hover:scale-105 shadow-sm'
+                  }`}
+                >
+                  <img src={avatar.img} alt={avatar.id} className="w-full h-full object-cover" />
+                </motion.button>
+              ))}
+            </div>
           </div>
 
-          {error && (
-            <div className="p-3 mb-4 bg-red-50 border border-red-100 text-red-600 font-bold text-sm rounded-xl">
-              ⚠️ {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSave} className="space-y-6">
-            <Input
-              label="اسم البطل"
-              id="heroName"
-              type="text"
-              placeholder="مثلاً: البطل عمر"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-
-            <div className="space-y-3">
-              <label className="text-[#1e3a8a] font-bold text-sm block">
-                اختر رفيقك في الرحلة 💫
-              </label>
-              <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto justify-items-center">
-                {avatarsList.map((avatar) => (
-                  <motion.button
-                    key={avatar.id}
-                    type="button"
-                    onClick={() => setSelectedAvatar(avatar.img)}
-                    className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 cursor-pointer focus:outline-none transition-all duration-200 ${
-                      selectedAvatar === avatar.img 
-                        ? 'border-blue-500 ring-4 ring-blue-100 scale-105' 
-                        : 'border-transparent hover:scale-105'
-                    }`}
-                  >
-                    <img src={avatar.img} alt={avatar.id} className="w-full h-full object-cover" />
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex gap-3 pt-2">
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 text-base"
-              >
-                {loading ? 'جاري الحفظ...' : 'حفظ التعديلات'}
-              </Button>
-              <Button
-                variant="outline"
-                type="button"
-                onClick={onClose}
-                className="w-full py-3 text-base border-slate-200 text-slate-500 hover:bg-slate-50"
-              >
-                إلغاء
-              </Button>
-            </div>
-          </form>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={onClose}
+              className="w-full py-3.5 text-sm sm:text-base border-slate-200 text-slate-500 hover:bg-slate-50 font-bold rounded-2xl shadow-sm"
+            >
+              إلغاء
+            </Button>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 text-sm sm:text-base font-bold rounded-2xl shadow-md shadow-blue-200/50"
+            >
+              {loading ? 'جاري الحفظ...' : 'حفظ التعديلات'}
+            </Button>
+          </div>
+        </form>
+      </motion.div>
+    </div>,
+    document.body
   );
 }
