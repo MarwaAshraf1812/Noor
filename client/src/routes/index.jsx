@@ -15,6 +15,16 @@ export const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+export const PublicOnlyRoute = ({ children }) => {
+  const user = useAuthStore((state) => state.user);
+
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
 export const AppRouter = () => {
   console.log("AppRouter component executing");
   const protectedAppRoutes = appRoutes.map((route) => {
@@ -30,9 +40,12 @@ export const AppRouter = () => {
   const element = useRoutes([
     {
       path: '/',
-      element: <LandingPage />,
+      element: <PublicOnlyRoute><LandingPage /></PublicOnlyRoute>,
     },
-    ...authRoutes,
+    ...authRoutes.map((route) => ({
+      ...route,
+      element: <PublicOnlyRoute>{route.element}</PublicOnlyRoute>,
+    })),
     ...protectedAppRoutes,
     {
       path: '*',
