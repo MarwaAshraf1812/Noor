@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
 import LevelUpModal from '../UI/LevelUpModal';
+import EditProfileModal from '../UI/EditProfileModal';
 import GemIMg from '../../assets/blue_gem.png';
 import defaultAvatar from '../../assets/avatar_green_boy.png';
 
@@ -18,8 +19,17 @@ export default function DashboardHeader() {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
+
+  // Auto-open Edit Profile modal if user has a Google/external profile photo 
+  // and hasn't chosen one of our local companions yet
+  useEffect(() => {
+    if (user && user.avatar_url && !user.avatar_url.includes('avatar_') && !user.avatar_url.includes('avtar_')) {
+      setShowEditProfile(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
@@ -116,6 +126,19 @@ export default function DashboardHeader() {
                 </div>
                 
                 <button
+                  onClick={() => {
+                    setShowEditProfile(true);
+                    setShowDropdown(false);
+                  }}
+                  className="w-full text-right px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors duration-150 flex items-center gap-2 cursor-pointer border-b border-slate-100/60"
+                >
+                  <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                  </svg>
+                  <span>تعديل الملف الشخصي</span>
+                </button>
+                
+                <button
                   onClick={handleLogout}
                   className="w-full text-right px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-150 flex items-center gap-2 cursor-pointer"
                 >
@@ -193,6 +216,11 @@ export default function DashboardHeader() {
         onClose={() => setShowLevelUp(false)}
         level={level}
         rank={getRankName(level)}
+      />
+
+      <EditProfileModal
+        isOpen={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
       />
 
     </header>

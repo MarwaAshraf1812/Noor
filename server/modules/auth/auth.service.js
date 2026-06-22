@@ -162,3 +162,22 @@ export const loginWithGoogle = async (googleToken, isRegister = false) => {
     throw new Error(error.response?.data?.error_description || error.message || "فشل التحقق من حساب جوجل");
   }
 };
+
+export const updateUserProfile = async (userId, data) => {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name: data.name || 'User',
+        avatar_url: data.avatar_url || undefined
+      },
+      include: {
+        gems: true
+      }
+    });
+    const { password: _, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword;
+  } catch (error) {
+    throw new Error(error.message || "فشل تحديث البيانات");
+  }
+};

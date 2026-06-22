@@ -101,3 +101,15 @@ export const googleLogin = async (req, res) => {
     res.status(400).json({ success: false, message: error.message || "حدث خطأ أثناء تسجيل الدخول بجوجل" });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, avatar_url } = req.body;
+    
+    const user = await authService.updateUserProfile(userId, { name, avatar_url });
+    res.status(200).json({ success: true, message: "تم تحديث البيانات بنجاح", user });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message || "حدث خطأ أثناء تحديث البيانات" });
+  }
+};

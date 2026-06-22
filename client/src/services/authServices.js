@@ -16,6 +16,9 @@ const authServices = {
     googleLogin(token, isRegister = false){
         return api.post('/auth/google', { token, isRegister })
     },
+    updateProfile(data){
+        return api.put('/auth/profile', data)
+    },
 };
 
 export default authServices;
