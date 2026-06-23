@@ -22,9 +22,10 @@ const useTasbihStore = create((set, get) => ({
     try {
       const response = await tasbihServices.submitSession(tasbihName, tasbihCount, completed);
 
-      // Refresh level & gems after tasbih session completion
-      await useAuthStore.getState().checkAuth();
-      await get().fetchDashboard();
+      await Promise.all([
+        useAuthStore.getState().checkAuth(),
+        get().fetchDashboard()
+      ]);
 
       set({ loading: false });
       return response.data;

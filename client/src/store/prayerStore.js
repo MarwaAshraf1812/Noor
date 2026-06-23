@@ -65,12 +65,11 @@ const usePrayerStore = create((set, get) => ({
         latitude,
         longitude
       });
-      
-      // Refresh user gems & levels after recording a prayer
-      await useAuthStore.getState().checkAuth();
-      
-      // Refresh the dashboard data
-      await get().fetchDashboard(latitude, longitude);
+
+      await Promise.all([
+        useAuthStore.getState().checkAuth(),
+        get().fetchDashboard(latitude, longitude)
+      ]);
       
       set({ loading: false });
       return response.data;
