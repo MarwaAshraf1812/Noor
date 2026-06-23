@@ -21,14 +21,15 @@ const GridCell = memo(({ day, prayer, dayData, record, onCellClick, todayStr, ne
   }
 
   const isFuture = isFutureDay || isTodayPrayerFuture;
+  const isBeforeRegistration = record?.status === 'BEFORE_REGISTRATION';
   const isCompleted = record?.status === 'COMPLETED' || record?.status === 'QADAA';
   
-  const isMissed = !isFuture && (record?.status === 'MISSED' || (isPast && !isCompleted));
-  const isPending = !isCompleted && !isMissed;
+  const isMissed = !isFuture && !isBeforeRegistration && (record?.status === 'MISSED' || (isPast && !isCompleted));
+  const isPending = !isCompleted && !isMissed && !isBeforeRegistration;
   
-  const isActive = !isFuture;
+  const isActive = !isFuture && !isBeforeRegistration;
 
-  const isSuggested = isToday && !isFuture && (isPending || record?.status === 'MISSED');
+  const isSuggested = isToday && !isFuture && !isBeforeRegistration && (isPending || record?.status === 'MISSED');
 
   const handleClick = (e) => {
     if (!isActive) return;

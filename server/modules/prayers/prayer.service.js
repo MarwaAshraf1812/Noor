@@ -187,7 +187,7 @@ export const MissedPrayers = async(userId, latitude, longitude, tx = null) => {
   const currentTime = getCurrentMinutes(timezone);
   const fajrTime = timeToMinutes(timings.Fajr);
 
-  // If we are before Fajr (e.g. between midnight and Fajr), no prayers of today are past yet.
+
   let pastPrayers = [];
   if (currentTime >= fajrTime) {
     pastPrayers = prayers.slice(0, currentIndex);
@@ -195,7 +195,6 @@ export const MissedPrayers = async(userId, latitude, longitude, tx = null) => {
 
   const today = getStartOfToday(timezone);
 
-  // Clean up any incorrect MISSED records for today (e.g. created after midnight but before Fajr)
   await db.prayer.deleteMany({
     where: {
       user_id: userId,
@@ -207,11 +206,28 @@ export const MissedPrayers = async(userId, latitude, longitude, tx = null) => {
 
   const recordedPrayers = await db.prayer.findMany({
     where: {user_id: userId, date: today}
-  })
+  });
 
   const recordedPrayerNames = new Set(recordedPrayers.map(p => p.prayer_name));
 
-  const missedPrayers = pastPrayers.filter(p => !recordedPrayerNames.has(p));
+  // Get user registration timestamp
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { created_at: true }
+  });
+  const userCreatedAt = user?.created_at || new Date();
+
+  // Filter missed prayers so we only mark them missed if the prayer time today is after the registration time
+  const missedPrayers = pastPrayers.filter(p => {
+    if (recordedPrayerNames.has(p)) return false;
+    if (!timings || !timings[p]) return true;
+
+    const [pHour, pMin] = timings[p].split(':').map(Number);
+    const prayerTimeToday = new Date(today);
+    prayerTimeToday.setHours(pHour, pMin, 0, 0);
+
+    return prayerTimeToday >= userCreatedAt;
+  });
 
    if (missedPrayers.length > 0) {
     await db.prayer.createMany({
@@ -237,6 +253,12 @@ export const getPrayerDashboardData = async (userId, latitude, longitude) => {
   const sevenDays = getLastSevenDays(timezone);
   const sevenDaysAgo = sevenDays[0];
 
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { created_at: true }
+  });
+  const userCreatedAt = user?.created_at || new Date();
+
   const prayers = await prisma.prayer.findMany({
     where: {
       user_id: userId,
@@ -257,7 +279,30 @@ export const getPrayerDashboardData = async (userId, latitude, longitude) => {
     weeklyGrid[dateKey] = {};
     prayerNames.forEach(name => {
       const record = prayers.find(p => formatDateToYYYYMMDD(p.date) === dateKey && p.prayer_name === name);
-      weeklyGrid[dateKey][name] = record ? { status: record.status, location: record.location } : { status: 'PENDING' };
+      if (record) {
+        weeklyGrid[dateKey][name] = { status: record.status, location: record.location };
+      } else {
+        // If there's no record, check if the prayer time is before registration
+        let isBeforeReg = false;
+        if (timings && timings[name]) {
+          const [pHour, pMin] = timings[name].split(':').map(Number);
+          const prayerTime = new Date(d);
+          prayerTime.setHours(pHour, pMin, 0, 0);
+          if (prayerTime < userCreatedAt) {
+            isBeforeReg = true;
+          }
+        } else {
+          const dateOnly = new Date(d);
+          dateOnly.setHours(0,0,0,0);
+          const regDateOnly = new Date(userCreatedAt);
+          regDateOnly.setHours(0,0,0,0);
+          if (dateOnly < regDateOnly) {
+            isBeforeReg = true;
+          }
+        }
+
+        weeklyGrid[dateKey][name] = { status: isBeforeReg ? 'BEFORE_REGISTRATION' : 'PENDING' };
+      }
     });
   }
 
