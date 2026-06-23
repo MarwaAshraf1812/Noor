@@ -23,7 +23,7 @@ export default function AdhkarCard({ item, remaining, onDhikrClick }) {
           {item.text}
         </p>
 
-        {/* Top-left Counter Ring Indicator */}
+        {}
         <div className="absolute top-2.5 left-2.5 flex items-center justify-center">
           {isDone ? (
             <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md animate-bounce-slow border-2 border-white font-black text-sm">

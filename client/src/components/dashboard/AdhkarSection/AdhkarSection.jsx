@@ -10,7 +10,6 @@ import AdhkarCard from './AdhkarCard';
 import AdhkarMascotFooter from './AdhkarMascotFooter';
 import CelebrationModal from '../../UI/CelebrationModal';
 
-// 1. Data Schema for all Adhkar Categories
 const ADHKAR_DATA = {
   morning: {
     title: "أذكار الصباح",
@@ -22,9 +21,9 @@ const ADHKAR_DATA = {
     bgEmoji: "🐥",
     items: [
       { id: 'm1', text: "آية الكرسي", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
-      { id: 'm2', text: "سورة الناس", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'm3', text: "سورة الاخلاص", target: 3, color: "bg-[#E8F5E9] text-[#1B5E20] border-[#C8E6C9]" },
       { id: 'm4', text: "سورة الفلق", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
+      { id: 'm2', text: "سورة الناس", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'm5', text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
       { id: 'm6', text: "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'm7', text: "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
@@ -42,9 +41,9 @@ const ADHKAR_DATA = {
     bgEmoji: "🦉",
     items: [
       { id: 'e1', text: "آية الكرسي", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
-      { id: 'e2', text: "سورة الناس", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'e3', text: "سورة الاخلاص", target: 3, color: "bg-[#E8F5E9] text-[#1B5E20] border-[#C8E6C9]" },
       { id: 'e4', text: "سورة الفلق", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
+      { id: 'e2', text: "سورة الناس", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'e5', text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
       { id: 'e6', text: "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'e7', text: "اللَّهُمَّ مَا أَمْسَى بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
@@ -105,12 +104,12 @@ export default function AdhkarSection() {
   const currentCategory = ADHKAR_DATA[activeTab];
   const items = currentCategory.items;
 
-  // 2. Fetch dashboard information from DB on mount
+  
   useEffect(() => {
     fetchDashboard().catch(e => console.error(e));
   }, [fetchDashboard]);
 
-  // 3. Initialize progress counts. If category is marked as completed on the backend database, set all to 0.
+  
   useEffect(() => {
     const backendKey = activeTab.toUpperCase() === 'EVENING' ? 'NIGHT' : activeTab.toUpperCase();
     const isDbCompleted = dashboardData?.todayStatus?.[backendKey] === true;
@@ -128,7 +127,7 @@ export default function AdhkarSection() {
     setProgressCounts(initialProgress);
   }, [activeTab, items, dashboardData]);
 
-  // 4. Calculations for progress bar
+  
   const totalTargetCount = items.reduce((acc, item) => acc + item.target, 0);
   const currentCompletedCount = items.reduce((acc, item) => {
     const remaining = progressCounts[item.id] ?? item.target;
@@ -139,18 +138,18 @@ export default function AdhkarSection() {
     ? Math.round((currentCompletedCount / totalTargetCount) * 100) 
     : 0;
 
-  // 5. Handle Click on individual Dhikr cards
+  
   const handleDhikrClick = async (item, event) => {
     const currentRemaining = progressCounts[item.id] ?? item.target;
-    if (currentRemaining <= 0) return; // Already completed
+    if (currentRemaining <= 0) return; 
 
     const newRemaining = currentRemaining - 1;
     
-    // Update local state and localStorage
+    
     setProgressCounts(prev => ({ ...prev, [item.id]: newRemaining }));
     localStorage.setItem(`noor_adhkar_${item.id}`, String(newRemaining));
 
-    // Audio & Visual Effects
+    
     if (newRemaining === 0) {
       playChimeSound();
       if (event?.currentTarget) {
@@ -160,7 +159,7 @@ export default function AdhkarSection() {
       playPopSound(500);
     }
 
-    // Check if category is completely done
+    
     const isAllCompleted = items.every(itm => {
       if (itm.id === item.id) return newRemaining === 0;
       return (progressCounts[itm.id] ?? itm.target) === 0;
@@ -214,17 +213,17 @@ export default function AdhkarSection() {
   return (
     <div className="w-full flex flex-col gap-4" dir="rtl">
       
-      {/* Tab Navigation header */}
+      {}
       <AdhkarTabNav
         activeTab={activeTab}
         onTabSelect={setActiveTab}
         categories={ADHKAR_DATA}
       />
 
-      {/* Main card container */}
+      {}
       <div className={`w-full rounded-[36px] p-6 bg-gradient-to-br ${currentCategory.theme} border-4 transition-all duration-500 shadow-xl relative overflow-hidden select-none min-h-[480px] flex flex-col gap-6`}>
         
-        {/* Floating background decorations */}
+        {}
         <div className="absolute top-6 left-6 text-6xl opacity-30 select-none animate-pulse">
           {currentCategory.illustration}
         </div>
@@ -232,14 +231,14 @@ export default function AdhkarSection() {
           {currentCategory.bgEmoji}
         </div>
 
-        {/* Progress Bar Header */}
+        {}
         <AdhkarProgressBar
           category={currentCategory}
           percentage={completionPercentage}
           onReset={handleReset}
         />
 
-        {/* Cards Grid */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 z-10 flex-1">
           <AnimatePresence mode="popLayout">
             {items.map(item => (
@@ -253,12 +252,12 @@ export default function AdhkarSection() {
           </AnimatePresence>
         </div>
 
-        {/* Mascot Footer */}
+        {}
         <AdhkarMascotFooter percentage={completionPercentage} />
 
       </div>
 
-      {/* Modal celebration window */}
+      {}
       <CelebrationModal
         isOpen={showCelebration}
         onClose={() => setShowCelebration(false)}
