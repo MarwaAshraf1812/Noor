@@ -41,23 +41,45 @@ export default defineConfig({
     })
   ],
   build: {
-    chunkSizeWarningLimit: 800,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router')) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
             return 'vendor-react';
           }
-          if (id.includes('node_modules/framer-motion/') || id.includes('node_modules/motion-dom/')) {
+          if (id.includes('node_modules/framer-motion') || id.includes('node_modules/motion-dom')) {
             return 'vendor-motion';
           }
-          if (id.includes('node_modules/lucide-react/')) {
+          if (id.includes('node_modules/lucide-react')) {
             return 'vendor-lucide';
           }
-          if (id.includes('node_modules/axios/')) {
+          if (id.includes('node_modules/axios')) {
             return 'vendor-axios';
           }
-          if (id.includes('node_modules/zustand/')) {
+          if (id.includes('node_modules/zustand')) {
+            return 'vendor-zustand';
+          }
+        }
+      }
+    },
+    rolldownOptions: {
+      output: {
+        codeSplitting: true,
+        manualChunks(id) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/framer-motion') || id.includes('node_modules/motion-dom')) {
+            return 'vendor-motion';
+          }
+          if (id.includes('node_modules/lucide-react')) {
+            return 'vendor-lucide';
+          }
+          if (id.includes('node_modules/axios')) {
+            return 'vendor-axios';
+          }
+          if (id.includes('node_modules/zustand')) {
             return 'vendor-zustand';
           }
         }
