@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
+import usePrayerStore from '../../store/prayerStore';
 import LevelUpModal from '../UI/LevelUpModal';
 import EditProfileModal from '../UI/EditProfileModal';
+import AnimatedCounter from '../UI/AnimatedCounter';
 import GemIMg from '../../assets/blue_gem.png';
 import defaultAvatar from '../../assets/avatar_green_boy.png';
+import { getMuted, setMuted } from '../../utils/audio';
 
 const getRankName = (lvl) => {
   if (lvl <= 1) return 'بطل مبتدئ 🌱';
@@ -22,9 +25,15 @@ export default function DashboardHeader() {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(getMuted());
 
-  // Auto-open Edit Profile modal if user has a Google/external profile photo 
-  // and hasn't chosen one of our local companions yet
+  const handleToggleMute = () => {
+    const nextMute = !isAudioMuted;
+    setIsAudioMuted(nextMute);
+    setMuted(nextMute);
+  };
+
+
   useEffect(() => {
     if (user && user.avatar_url && !user.avatar_url.includes('avatar_') && !user.avatar_url.includes('avtar_')) {
       setShowEditProfile(true);
@@ -58,6 +67,9 @@ export default function DashboardHeader() {
     setShowInstallBtn(false);
   };
   
+  const { dashboardData: prayerData } = usePrayerStore();
+  const streak = prayerData?.streak || 0;
+  
   const gemsCount = user?.gems?.total ?? user?.gems ?? 0;
   const avatarSrc = user?.avatar_url || defaultAvatar;
 
@@ -88,7 +100,7 @@ export default function DashboardHeader() {
     <header className="w-full flex justify-between items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 md:px-12 bg-white/40 backdrop-blur-sm border-b z-50 border-slate-100/80 select-none relative" dir="rtl">
       
       <div className="flex items-center gap-2 sm:gap-3">
-        <h2 className="text-base sm:text-2xl font-black text-[#3b82f6] tracking-tight flex items-center gap-1">
+        <h2 className="text-base sm:text-2xl font-black text-[#3b82f6] tracking-normal flex items-center gap-1">
           <span className="hidden sm:inline">مرحبا يا {greetingTitle}</span>
           <span className="text-[#f59e0b] inline-block max-w-[70px] sm:max-w-none truncate align-bottom">
             {user?.name || 'عمر'}
@@ -137,6 +149,30 @@ export default function DashboardHeader() {
                   </svg>
                   <span>تعديل الملف الشخصي</span>
                 </button>
+
+                <button
+                  onClick={() => {
+                    handleToggleMute();
+                    setShowDropdown(false);
+                  }}
+                  className="w-full text-right px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors duration-150 flex items-center gap-2 cursor-pointer border-b border-slate-100/60"
+                >
+                  {isAudioMuted ? (
+                    <>
+                      <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25M6.75 22.5L12 18.75m0 0v-13.5M12 18.75L6.75 15H3.75a1.5 1.5 0 01-1.5-1.5V10.5a1.5 1.5 0 011.5-1.5h3L12 5.25m0 13.5v-13.5" />
+                      </svg>
+                      <span>تشغيل الأصوات</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 22.5L12 18.75m0 0v-13.5M12 18.75L6.75 15H3.75a1.5 1.5 0 01-1.5-1.5V10.5a1.5 1.5 0 011.5-1.5h3L12 5.25m0 13.5v-13.5" />
+                      </svg>
+                      <span>كتم الأصوات</span>
+                    </>
+                  )}
+                </button>
                 
                 <button
                   onClick={handleLogout}
@@ -166,6 +202,15 @@ export default function DashboardHeader() {
           </button>
         )}
 
+        {streak > 0 && (
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-orange-50/60 px-2.5 py-1.5 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl border border-orange-100/50 shadow-sm hover:scale-105 transition-transform duration-200" title={`سلسلة حماسية: ${streak} أيام متتالية! 🔥`}>
+            <span className="text-base sm:text-2xl animate-pulse">🔥</span>
+            <span className="text-orange-600 font-black text-xs sm:text-sm leading-normal whitespace-nowrap">
+              {streak} {streak === 1 ? 'يوم' : 'أيام'}
+            </span>
+          </div>
+        )}
+
         <div id="header-gems-badge" className="flex items-center gap-2 sm:gap-3 bg-blue-50/50 px-2.5 py-1.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl border border-blue-100/50 shadow-sm hover:scale-105 transition-transform duration-200">
           <img 
             src={GemIMg} 
@@ -173,7 +218,7 @@ export default function DashboardHeader() {
             className="w-6 h-6 sm:w-8 sm:h-8 object-contain animate-bounce" 
           />
           <span className="text-[#3b82f6] font-black text-lg sm:text-xl leading-none">
-            {gemsCount}
+            <AnimatedCounter value={gemsCount} />
           </span>
         </div>
 
@@ -183,7 +228,7 @@ export default function DashboardHeader() {
               <path d="M12 .587l3.668 7.431 8.2 1.191-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.857 1.4-8.168L.132 9.209l8.2-1.191L12 .587z" />
             </svg>
             <span className="absolute text-white font-black text-xs sm:text-base z-10 pb-0.5 drop-shadow-sm">
-              {level}
+              <AnimatedCounter value={level} />
             </span>
           </div>
 

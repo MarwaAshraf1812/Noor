@@ -49,7 +49,7 @@ const GridCell = memo(({ day, prayer, dayData, record, onCellClick, todayStr, ne
         if (isActive) playTickSound();
       }}
       disabled={!isActive}
-      className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200 shadow-sm relative shrink-0 ${
+      className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200 shadow-sm relative shrink-0 ${
         isActive 
           ? 'bg-white cursor-pointer hover:scale-105 active:scale-95 hover:shadow-md' 
           : 'bg-white/95 border border-blue-100/30 cursor-default opacity-60'

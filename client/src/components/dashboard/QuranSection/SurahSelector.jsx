@@ -43,7 +43,7 @@ export default function SurahSelector({
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
       </div>
 
-      {/* Quick Select Chips */}
+      {}
       <div className="flex flex-wrap items-center gap-1.5 mt-2">
         <span className="text-[10px] sm:text-xs font-black text-slate-400">سُوَر مقترحة:</span>
         {quickSurahs.map((qs) => (
@@ -58,7 +58,7 @@ export default function SurahSelector({
         ))}
       </div>
 
-      {/* Surah Dropdown options */}
+      {}
       {showDropdown && filteredSurahs.length > 0 && (
         <div className="absolute right-0 left-0 mt-2 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-2xl shadow-xl z-50 scrollbar-thin">
           {filteredSurahs.map((surah) => (

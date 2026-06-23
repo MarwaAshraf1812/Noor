@@ -1,7 +1,7 @@
 import React from 'react';
 import usePrayerStore from '../../store/prayerStore';
 
-// High-fidelity 2D Gamified Gem Icon SVG supporting multiple colors
+
 const GemIcon = ({ color = 'pink' }) => {
   let outerFill = '#ff4d6d';
   let innerFill = '#ff758f';
@@ -92,7 +92,7 @@ export default function DiamondProgress({
                 )}
               </div>
 
-              {/* Bottom part: Label */}
+              {}
               <span className={`text-[11px] sm:text-xs font-black tracking-wide ${isCompleted ? `${textColor}` : `${textColor}/60`}`}>
                 {item.label}
               </span>

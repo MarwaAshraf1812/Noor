@@ -34,10 +34,10 @@ const useQuranStore = create((set, get) => ({
       const response = await quranServices.submitSession({
         surah_name: surahName,
         verse_count: Number(verseCount),
-        type // "HIFZ" or "REVISION"
+        type 
       });
 
-      // Refresh user level, gems, and dashboard after submitting the session
+      
       await useAuthStore.getState().checkAuth();
       await get().fetchDashboard();
 
@@ -57,7 +57,7 @@ const useQuranStore = create((set, get) => ({
         daily_revision_target: Number(dailyRevisionTarget)
       });
 
-      // Refresh dashboard analytics to align with new targets
+      
       await get().fetchDashboard();
 
       set({ loading: false });

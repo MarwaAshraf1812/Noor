@@ -65,7 +65,7 @@ export default function DashboardNav({ activeTab, setActiveTab }) {
             <button
               key={tab.id}
               onClick={() => setActiveTab?.(tab.id)}
-              className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3.5 rounded-xl transition-all duration-300 cursor-pointer bg-transparent ${
+              className={`flex flex-col items-center justify-center gap-1 py-2.5 px-3.5 rounded-xl transition-all duration-300 cursor-pointer bg-transparent ${
                 isActive
                   ? 'text-[#3b82f6] scale-110 font-bold'
                   : 'text-[#64748b] hover:text-[#334155]'
@@ -74,7 +74,7 @@ export default function DashboardNav({ activeTab, setActiveTab }) {
               <div className={`transition-transform duration-300 ${isActive ? 'scale-110' : ''}`}>
                 {tab.icon}
               </div>
-              <span className="text-[10px] font-black tracking-tight mt-0.5">
+              <span className="text-[10px] font-black tracking-normal mt-0.5">
                 {tab.label}
               </span>
             </button>

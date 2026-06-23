@@ -34,7 +34,7 @@ export default function LevelUpModal({ isOpen, onClose, level = 1, rank = 'بط�
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.85, opacity: 0, y: 30 }}
           transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-          className="bg-gradient-to-b from-[#FFFDF0] to-white rounded-[36px] p-8 max-w-sm w-full shadow-2xl border-4 border-amber-400 relative z-10 text-center flex flex-col items-center gap-4 select-none"
+          className="bg-gradient-to-b from-[#FFFDF0] to-white rounded-[36px] p-5 sm:p-8 max-w-sm w-full shadow-2xl border-4 border-amber-400 relative z-10 text-center flex flex-col items-center gap-4 select-none"
         >
           <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[32px]">
             <div className="absolute top-10 left-10 text-yellow-400 animate-ping">⭐</div>
@@ -42,7 +42,7 @@ export default function LevelUpModal({ isOpen, onClose, level = 1, rank = 'بط�
             <div className="absolute bottom-16 left-16 text-yellow-300 animate-pulse">⭐</div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black text-[#D97706] tracking-tight animate-bounce">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#D97706] tracking-normal animate-bounce">
             مستوى جديد! 🎉
           </h2>
 

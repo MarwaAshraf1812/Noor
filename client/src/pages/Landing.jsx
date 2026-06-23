@@ -9,22 +9,22 @@ import { Footer } from '../components/shared/Footer';
 export default function LandingPage() {
   return (
     <div className="relative min-h-screen bg-[#f0f9ff]/30 text-slate-800">
-      {/* Navigation Bar */}
+      {}
       <Navbar />
 
-      {/* Hero Section */}
+      {}
       <Hero />
 
-      {/* About Section */}
+      {}
       <About />
 
-      {/* Features / Treasures Section */}
+      {}
       <Features />
 
-      {/* Badges Section */}
+      {}
       <Badges />
 
-      {/* Footer */}
+      {}
       <Footer />
     </div>
   );

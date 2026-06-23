@@ -16,7 +16,7 @@ export default function TargetSuccessModal({ isOpen, onClose }) {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Mascot Chick in popup */}
+        {}
         <div className="mb-4 mt-2">
           <svg className="w-20 h-20 animate-bounce" viewBox="0 0 100 100" fill="none">
             <circle cx="50" cy="50" r="32" fill="#FFE359" />

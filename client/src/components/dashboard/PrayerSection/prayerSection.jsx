@@ -34,7 +34,7 @@ export default function PrayerSection() {
   const weeklyDataMapped = useMemo(() => {
     if (!dashboardData?.weeklyGrid) return {};
     
-    // Find current week's Saturday (week starts on Saturday, ends on Friday)
+    
     const todayObj = new Date();
     const day = todayObj.getDay();
     const offset = day === 6 ? 0 : day + 1;
