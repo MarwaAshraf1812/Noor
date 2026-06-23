@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Hourglass, Check } from 'lucide-react';
 
-export default function DhikrGoalSelector({ target, handleTargetChange }) {
+const DhikrGoalSelector = memo(({ target, handleTargetChange }) => {
   return (
     <div className="md:col-span-3 flex flex-col gap-3">
       <div className="bg-white/70 border border-slate-100 rounded-3xl p-4 flex flex-col gap-3.5 shadow-sm">
@@ -45,4 +45,8 @@ export default function DhikrGoalSelector({ target, handleTargetChange }) {
       </div>
     </div>
   );
-}
+});
+
+DhikrGoalSelector.displayName = 'DhikrGoalSelector';
+
+export default DhikrGoalSelector;

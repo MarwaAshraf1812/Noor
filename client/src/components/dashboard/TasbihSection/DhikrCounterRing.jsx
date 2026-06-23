@@ -20,7 +20,7 @@ export default function DhikrCounterRing({
     <div className="md:col-span-6 flex flex-col items-center gap-4">
       <div className="relative">
         
-        {/* Reset Button */}
+        {}
         <button
           onClick={handleReset}
           className="absolute -top-1 -right-1 z-10 w-9 h-9 rounded-full bg-white hover:bg-red-50 text-slate-500 hover:text-red-500 border border-slate-200 flex items-center justify-center transition-all active:scale-90 cursor-pointer shadow-md"
@@ -36,7 +36,7 @@ export default function DhikrCounterRing({
           disabled={isSubmitting}
           className="w-72 h-72 rounded-full bg-white flex items-center justify-center relative outline-none border-[6px] border-slate-50 glow-circle-interactive cursor-pointer overflow-visible"
         >
-          {/* Dynamic SVG stroke progress */}
+          {}
           <svg className="absolute inset-0 w-full h-full transform -rotate-90 p-1" viewBox="0 0 200 200">
             <circle
               cx="100"
@@ -60,7 +60,7 @@ export default function DhikrCounterRing({
             />
           </svg>
 
-          {/* Display text and fractions */}
+          {}
           <div className="z-10 flex flex-col items-center gap-2">
             <span className={`px-4.5 py-1.5 rounded-full font-black text-sm sm:text-base shadow-sm ${theme.badgeBg}`}>
               {activePhrase}
@@ -76,7 +76,7 @@ export default function DhikrCounterRing({
             </div>
           </div>
 
-          {/* Click floating particles */}
+          {}
           <AnimatePresence>
             {floatingParticles.map((p) => (
               <span
@@ -95,10 +95,6 @@ export default function DhikrCounterRing({
 
         </motion.button>
       </div>
-
-      <span className="text-xs sm:text-sm font-black text-slate-400 flex items-center gap-1 select-none animate-pulse">
-        <span>👇 اضغط على الدائرة عشان تعد!</span>
-      </span>
     </div>
   );
 }
