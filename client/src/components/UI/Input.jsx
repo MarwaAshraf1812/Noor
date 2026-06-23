@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 export default function Input({
   label,
@@ -37,7 +38,7 @@ export default function Input({
           disabled={disabled}
           required={required}
           className={`w-full px-4 py-3 rounded-2xl border-2 text-slate-700 bg-white/70 backdrop-blur-sm text-right placeholder-slate-400 focus:outline-none transition-all duration-200 ${
-            isPassword ? 'pl-12' : ''
+            isPassword ? 'ps-12' : ''
           } ${
             error 
               ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
@@ -50,7 +51,7 @@ export default function Input({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer p-1"
+            className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer p-1"
           >
             {showPassword ? (
               <EyeOff className="w-5 h-5" strokeWidth={2} />
@@ -68,3 +69,16 @@ export default function Input({
     </div>
   );
 }
+
+Input.propTypes = {
+  label: PropTypes.string,
+  id: PropTypes.string.isRequired,
+  type: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  error: PropTypes.string,
+  required: PropTypes.bool,
+  disabled: PropTypes.bool,
+  className: PropTypes.string
+};

@@ -10,7 +10,7 @@ export default function WeekTracker({
   return (
     <div className="w-full bg-gradient-to-br from-[#A8E45C] to-[#7CB342] rounded-[36px] p-6 sm:p-8 shadow-lg shadow-[#A8E45C]/15 relative overflow-hidden flex flex-col items-center select-none" dir="rtl">
       
-      {/* Banner Title */}
+      {}
       <div className="text-center text-white z-10 flex flex-col items-center">
         <h3 className="text-lg sm:text-2xl font-black flex items-center gap-2 drop-shadow-sm">
           <span>📦</span> أسبوع القرآن
@@ -22,7 +22,7 @@ export default function WeekTracker({
         </p>
       </div>
 
-      {/* 7 Days Row */}
+      {}
       <div className="grid grid-cols-7 gap-1.5 xs:gap-3 sm:gap-4 w-full max-w-3xl mt-6 sm:mt-8 z-10 justify-items-center">
         {weekDays.map((day) => (
           <div 
@@ -45,7 +45,7 @@ export default function WeekTracker({
                 <div className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-slate-300/70" />
               )}
 
-              {/* Pulse indicator if today and not completed */}
+              {}
               {day.isToday && !day.isCompleted && (
                 <span className="absolute -top-1 -right-1 flex h-4 w-4">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
@@ -57,7 +57,7 @@ export default function WeekTracker({
         ))}
       </div>
 
-      {/* Buttons Row */}
+      {}
       <div className="flex flex-col xs:flex-row items-center gap-3 sm:gap-4 mt-8 w-full max-w-md z-10">
         <button
           onClick={() => handleOpenLog('HIFZ')}
@@ -74,23 +74,23 @@ export default function WeekTracker({
         </button>
       </div>
 
-      {/* Chick Mascot in bottom right */}
+      {}
       <div className="absolute -bottom-2 right-2 sm:right-6 w-20 h-20 sm:w-28 sm:h-28 z-0 pointer-events-none opacity-90 select-none animate-float">
         <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
-          {/* Body */}
+          {}
           <circle cx="50" cy="50" r="32" fill="#FFE359" />
-          {/* Cheeks */}
+          {}
           <circle cx="28" cy="53" r="5.5" fill="#FFA5A5" />
           <circle cx="72" cy="53" r="5.5" fill="#FFA5A5" />
-          {/* Eyes */}
+          {}
           <path d="M 28 47 Q 32 44 36 47" stroke="#42342A" strokeWidth="4" strokeLinecap="round" fill="none" />
           <path d="M 64 47 Q 68 44 72 47" stroke="#42342A" strokeWidth="4" strokeLinecap="round" fill="none" />
-          {/* Beak */}
+          {}
           <polygon points="45,49 55,49 50,56" fill="#F39C12" />
-          {/* Feet */}
+          {}
           <path d="M 40 82 Q 40 87 43 88" stroke="#F39C12" strokeWidth="4.5" strokeLinecap="round" />
           <path d="M 60 82 Q 60 87 57 88" stroke="#F39C12" strokeWidth="4.5" strokeLinecap="round" />
-          {/* Wings */}
+          {}
           <ellipse cx="15" cy="54" rx="4" ry="8.5" fill="#FFE359" transform="rotate(-15 15 54)" />
           <ellipse cx="85" cy="54" rx="4" ry="8.5" fill="#FFE359" transform="rotate(15 85 54)" />
         </svg>

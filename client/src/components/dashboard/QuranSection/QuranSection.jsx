@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import useQuranStore from '../../../store/quranStore';
 import useAuthStore from '../../../store/authStore';
 import QuranCard from './QuranCard';
@@ -10,6 +10,7 @@ import TargetSuccessModal from './TargetSuccessModal';
 import friendOfQuranImg from '../../../assets/friend_of_quran.png';
 import { playPopSound } from '../../../utils/audio';
 import { Settings } from 'lucide-react';
+import useQuranWeekTracker from '../../../hooks/useQuranWeekTracker';
 
 export default function QuranSection() {
     const { user } = useAuthStore();
@@ -20,10 +21,8 @@ export default function QuranSection() {
     const [hifzTargetInput, setHifzTargetInput] = useState(15);
     const [revisionTargetInput, setRevisionTargetInput] = useState(15);
 
-    // State for active day status popup
     const [activeDayStatus, setActiveDayStatus] = useState(null);
 
-    // State for target update success popup
     const [showTargetSuccess, setShowTargetSuccess] = useState(false);
 
     useEffect(() => {
@@ -77,57 +76,12 @@ export default function QuranSection() {
     const totalHifz = dashboardData?.analytics?.totalHifz || 0;
     const weeklyActivity = analytics?.weeklyActivity || [];
 
-    const getTodayLocalMidnightInEgypt = () => {
-        const offsetMs = 3 * 60 * 60 * 1000;
-        const localTime = new Date(new Date().getTime() + offsetMs);
-        const year = localTime.getUTCFullYear();
-        const month = String(localTime.getUTCMonth() + 1).padStart(2, '0');
-        const day = String(localTime.getUTCDate()).padStart(2, '0');
-        return new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-    };
-
-    const weekDays = useMemo(() => {
-        const today = getTodayLocalMidnightInEgypt();
-        const dayOfWeek = today.getUTCDay(); // 0: Sun, 1: Mon, ..., 6: Sat
-
-        // Calculate distance to Saturday (starts at 6)
-        const diffToSaturday = dayOfWeek === 6 ? 0 : -(dayOfWeek + 1);
-
-        const weekDaysArr = [];
-        const arabicNames = [
-            { name: 'السبت', code: 6 },
-            { name: 'الأحد', code: 0 },
-            { name: 'الأثنين', code: 1 },
-            { name: 'الثلاثاء', code: 2 },
-            { name: 'الاربعاء', code: 3 },
-            { name: 'الخميس', code: 4 },
-            { name: 'الجمعه', code: 5 }
-        ];
-
-        for (let i = 0; i < 7; i++) {
-            const targetDate = new Date(today);
-            targetDate.setUTCDate(today.getUTCDate() + diffToSaturday + i);
-
-            const activeItem = weeklyActivity.find(w => {
-                const itemDate = new Date(w.date);
-                return itemDate.getTime() === targetDate.getTime();
-            });
-
-            weekDaysArr.push({
-                dayName: arabicNames[i].name,
-                date: targetDate,
-                isCompleted: activeItem ? activeItem.active : false,
-                isToday: targetDate.getTime() === today.getTime()
-            });
-        }
-
-        return weekDaysArr;
-    }, [weeklyActivity]);
+    const { weekDays } = useQuranWeekTracker(weeklyActivity);
 
     return (
         <div className="w-full flex flex-col gap-6 select-none" dir="rtl">
 
-            {/* Target Setting / Gear Row */}
+            {}
             <div className="flex justify-end gap-3 px-1">
                 <button
                     onClick={() => { playPopSound(); setShowSettings(!showSettings); }}
@@ -138,7 +92,7 @@ export default function QuranSection() {
                 </button>
             </div>
 
-            {/* Target Setting Panel */}
+            {}
             {showSettings && (
                 <TargetSettings
                     hifzTargetInput={hifzTargetInput}
@@ -150,7 +104,7 @@ export default function QuranSection() {
                 />
             )}
 
-            {/* Detail Cards Row */}
+            {}
             {loading ? (
                 <div className="flex items-center justify-center py-12">
                     <div className="w-10 h-10 border-4 border-[#4A90E2] border-t-transparent rounded-full animate-spin" />
@@ -162,7 +116,7 @@ export default function QuranSection() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mx-auto items-stretch mt-2">
 
-                    {/* Card 1: Revision (آيات راجعتها) */}
+                    {}
                     <QuranCard
                         type="revision"
                         title="آيات راجعتها"
@@ -174,7 +128,7 @@ export default function QuranSection() {
                         onAction={() => handleOpenLog('REVISION')}
                     />
 
-                    {/* Card 2: Total Stats (آيات حفظتها) */}
+                    {}
                     <QuranCard
                         type="total_stats"
                         title="آيات حفظتها"
@@ -183,7 +137,7 @@ export default function QuranSection() {
                         colorTheme="yellow"
                     />
 
-                    {/* Card 3: Hifz Target (تاج الحافظ) */}
+                    {}
                     <QuranCard
                         type="hifz"
                         title="تاج الحافظ"
@@ -199,7 +153,7 @@ export default function QuranSection() {
                 </div>
             )}
 
-            {/* Week Tracker Panel */}
+            {}
             <WeekTracker
                 user={user}
                 weekDays={weekDays}
@@ -207,21 +161,21 @@ export default function QuranSection() {
                 handleOpenLog={handleOpenLog}
             />
 
-            {/* Interactive Day Status Popup */}
+            {}
             <DayStatusModal
                 isOpen={Boolean(activeDayStatus)}
                 onClose={() => setActiveDayStatus(null)}
                 dayStatus={activeDayStatus}
             />
 
-            {/* Interactive Quran Log Modal */}
+            {}
             <QuranLogModal
                 isOpen={logModalOpen}
                 onClose={() => setLogModalOpen(false)}
                 defaultType={modalDefaultType}
             />
 
-            {/* Target Success Popup Modal with custom gradient */}
+            {}
             <TargetSuccessModal
                 isOpen={showTargetSuccess}
                 onClose={() => setShowTargetSuccess(false)}

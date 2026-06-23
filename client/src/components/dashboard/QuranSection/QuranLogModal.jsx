@@ -19,7 +19,7 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationConfig, setCelebrationConfig] = useState(null);
 
-  // Suggested surahs for children
+  
   const quickSurahs = [
     { name: 'الفاتحة', searchKey: 'الفاتحة' },
     { name: 'النبأ', searchKey: 'النبأ' },
@@ -28,7 +28,7 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
     { name: 'الناس', searchKey: 'الناس' }
   ];
 
-  // Fetch Surahs on modal open
+  
   useEffect(() => {
     if (isOpen) {
       fetchSurahs().catch(e => console.error(e));
@@ -163,7 +163,7 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
       <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 select-none animate-fadeIn" dir="rtl">
         <div className={`bg-gradient-to-b ${activeTheme.gradient} w-full max-w-md rounded-[32px] border-4 ${activeTheme.border} shadow-2xl p-6 relative overflow-visible transition-all duration-300`}>
           
-          {/* Close button */}
+          {}
           <button 
             onClick={onClose}
             className="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-all active:scale-90 cursor-pointer"
@@ -171,7 +171,7 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
             <X className="w-5 h-5" />
           </button>
 
-          {/* Heading */}
+          {}
           <div className="text-center mb-6 px-6">
             <h3 className="text-xl sm:text-2xl font-black text-slate-800 flex items-center justify-center gap-2">
               <Sparkles className={`w-6 h-6 ${activeTheme.textTheme} animate-spin-slow`} />
@@ -184,7 +184,7 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             
-            {/* Tabs for HIFZ / REVISION */}
+            {}
             <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200/50">
               <button
                 type="button"
@@ -210,7 +210,7 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
               </button>
             </div>
 
-            {/* Surah Selector Component */}
+            {}
             <SurahSelector
               surahsList={surahsList}
               searchQuery={searchQuery}
@@ -225,7 +225,7 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
               activeTheme={activeTheme}
             />
 
-            {/* Verse Counter Component */}
+            {}
             <VerseCounter
               verseCount={verseCount}
               setVerseCount={setVerseCount}
@@ -234,7 +234,7 @@ export default function QuranLogModal({ isOpen, onClose, defaultType = 'HIFZ' })
               playPopSound={playPopSound}
             />
 
-            {/* Submit button */}
+            {}
             <button
               type="submit"
               disabled={isSubmitting || !selectedSurah}

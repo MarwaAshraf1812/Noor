@@ -67,13 +67,13 @@ export const Avatars = () => {
   return (
     <section id="avatars" className="py-20 bg-gradient-to-b from-sky-100/50 via-sky-50 to-white relative overflow-hidden">
       
-      {/* Decors */}
+      {}
       <img src={starImg} alt="نجمة" className="absolute top-10 right-10 w-8 h-8 opacity-30 animate-pulse" />
       <img src={gemBlueImg} alt="جوهرة" className="absolute bottom-16 left-16 w-8 h-8 opacity-30 animate-float" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header */}
+        {}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-brand-pink font-extrabold text-lg bg-brand-pink/10 px-4 py-1.5 rounded-full">
             👾 أصدقاء الرحلة
@@ -88,7 +88,7 @@ export const Avatars = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Right: Speak Bubble & Active Character (Arabic is RTL, so this is on the right/center) */}
+          {}
           <div className="lg:col-span-5 flex flex-col items-center">
             
             <AnimatePresence mode="wait">
@@ -100,7 +100,7 @@ export const Avatars = () => {
                 transition={{ duration: 0.3 }}
                 className="w-full flex flex-col items-center"
               >
-                {/* Speech Bubble */}
+                {}
                 <div className="relative bg-white p-6 rounded-[32px] border-4 border-brand-purple shadow-xl text-center max-w-md w-full mb-8">
                   <div className="absolute -bottom-4 right-1/2 translate-x-1/2 w-8 h-8 bg-white border-r-4 border-b-4 border-brand-purple rotate-45"></div>
                   <p className="text-slate-700 font-bold text-lg leading-relaxed">
@@ -108,7 +108,7 @@ export const Avatars = () => {
                   </p>
                 </div>
 
-                {/* Main Avatar Showcase */}
+                {}
                 <div className="relative">
                   <div className="absolute inset-0 bg-brand-purple/10 rounded-full blur-2xl transform scale-125 -z-10"></div>
                   <motion.img 
@@ -131,7 +131,7 @@ export const Avatars = () => {
 
           </div>
 
-          {/* Left: Avatar Grid Selectors */}
+          {}
           <div className="lg:col-span-7">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
               {avatarsList.map((avatar, index) => {
@@ -165,7 +165,7 @@ export const Avatars = () => {
 
         </div>
 
-        {/* Playful call to action at the bottom */}
+        {}
         <div className="mt-16 text-center">
           <motion.a
             href="/auth"

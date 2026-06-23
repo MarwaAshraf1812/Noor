@@ -7,7 +7,7 @@ const prayerServices = {
     });
   },
   record(data) {
-    // data structure: { prayerName, status, location, latitude, longitude }
+    
     return api.post('/prayer/record', data);
   }
 };

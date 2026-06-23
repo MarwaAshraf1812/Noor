@@ -4,7 +4,7 @@ import starImg from '../../../assets/Star.png';
 import quranImg from '../../../assets/quran_2.png';
 
 export default function QuranCard({
-  type, // 'revision' | 'total_stats' | 'hifz'
+  type, 
   title,
   subtitle,
   target,
@@ -14,11 +14,11 @@ export default function QuranCard({
   value,
   mascot,
   onAction,
-  colorTheme = 'blue' // 'blue' | 'yellow' | 'green'
+  colorTheme = 'blue' 
 }) {
   const progressPercent = Math.max(0, Math.min(100, progress || 0));
 
-  // Style configurations based on theme
+  
   const themes = {
     blue: {
       border: 'border-[#4A90E2]/40 hover:border-[#4A90E2]/70',
@@ -80,7 +80,7 @@ export default function QuranCard({
 
   return (
     <TiltCard className={`w-full p-5 rounded-[28px] border-2 shadow-sm ${currentTheme.border} ${currentTheme.bg} flex flex-col justify-between min-h-[160px] select-none transition-all duration-300`}>
-      {/* Top Header */}
+      {}
       <div className="flex items-center justify-between w-full">
         <img 
           src={quranImg} 
@@ -92,7 +92,7 @@ export default function QuranCard({
         </h4>
       </div>
 
-      {/* Subtitle / Middle Content */}
+      {}
       <div className="mt-2 text-right">
         {subtitle ? (
           <p className="text-xs sm:text-sm font-extrabold text-slate-700">
@@ -111,20 +111,20 @@ export default function QuranCard({
         )}
       </div>
 
-      {/* Progress Bar Row */}
+      {}
       <div className="flex items-center gap-3 w-full mt-3">
-        {/* Remaining label */}
+        {}
         <span className="text-[10px] sm:text-xs font-black text-slate-500 whitespace-nowrap min-w-[70px] text-right">
           باقي {remaining} آيات 🏁
         </span>
 
-        {/* Progress Bar track */}
+        {}
         <div className={`flex-1 relative h-3 ${currentTheme.progressBg} rounded-full border border-slate-200/10 overflow-visible`}>
           <div 
             className={`absolute right-0 top-0 h-full rounded-full transition-all duration-700 ease-out ${currentTheme.progressFill}`}
             style={{ width: `${progressPercent}%` }}
           />
-          {/* Star Handle indicator */}
+          {}
           <img 
             src={starImg} 
             alt="Star Indicator" 
@@ -134,7 +134,7 @@ export default function QuranCard({
         </div>
       </div>
 
-      {/* Footer link / Goal info */}
+      {}
       <div className="mt-3 w-full">
         {type === 'revision' ? (
           <button 

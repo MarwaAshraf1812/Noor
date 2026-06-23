@@ -56,7 +56,7 @@ export default function QuranCard() {
       isCompleted: i < currentProgress
     }));
   } else {
-    // Determine the window start position to center the current progress
+    
     const startItem = Math.max(1, Math.min(currentProgress - 1, hifzTarget - maxVisible + 1));
     items = Array.from({ length: maxVisible }, (_, idx) => {
       const itemNum = startItem + idx;

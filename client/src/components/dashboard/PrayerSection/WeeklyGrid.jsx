@@ -49,7 +49,7 @@ const WeeklyGrid = memo(({ weeklyCompletedCount, weeklyDataMapped, todayStr, nex
             <div className="w-20 sm:w-24 shrink-0" />
             
             {WEEKDAYS.map((day) => (
-              <div key={day.key} className="w-10 sm:w-14 text-center text-xs sm:text-sm font-black text-blue-100 select-none shrink-0">
+              <div key={day.key} className="w-11 sm:w-14 text-center text-xs sm:text-sm font-black text-blue-100 select-none shrink-0">
                 {day.label}
               </div>
             ))}

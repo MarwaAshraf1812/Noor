@@ -22,7 +22,7 @@ const useAdhkarStore = create((set, get) => ({
     try {
       const response = await adhkarServices.submitSession(category);
 
-      // Refresh level & gems after completing adhkar
+      
       await useAuthStore.getState().checkAuth();
       await get().fetchDashboard();
 

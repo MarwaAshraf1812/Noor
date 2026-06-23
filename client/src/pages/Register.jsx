@@ -34,7 +34,7 @@ export default function Register() {
   const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
-    /* global google */
+    
     if (typeof google !== 'undefined') {
       const client = google.accounts.oauth2.initTokenClient({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "741420309323-b29fptg10lt95h2bcr1q7284n8r8jb2b.apps.googleusercontent.com",
@@ -120,7 +120,7 @@ export default function Register() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white" dir="rtl">
       
-      {/* Right Column: Form Area (55% Width on Desktop) */}
+      {}
       <div className="w-full md:w-[55%] flex items-center justify-center p-8 sm:p-12 lg:p-16 md:border-l md:border-slate-200/80">
         <div className="w-full max-w-md">
           <AnimatePresence mode="wait">
@@ -289,7 +289,7 @@ export default function Register() {
         </div>
       </div>
 
-      {/* Left Column: Gradient & Illustration (45% Width on Desktop) */}
+      {}
       <div className="hidden md:flex md:w-[45%] bg-gradient-to-b from-[#a9d8ff] via-[#eff6ff] to-white relative overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-yellow-200/40 rounded-full blur-3xl"></div>
         <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-blue-200/50 rounded-full blur-3xl"></div>

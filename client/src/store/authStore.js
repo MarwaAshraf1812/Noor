@@ -37,7 +37,7 @@ const useAuthStore = create((set) => ({
         set({ user: null, loading: false });
       }
     } catch (error) {
-      // If server check fails (unauthorized/expired cookie), clear cache
+      
       localStorage.removeItem('noor_user');
       localStorage.removeItem('token');
       set({ user: null, loading: false });
@@ -50,7 +50,7 @@ const useAuthStore = create((set) => ({
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
-      // Always clear local state and cache regardless of server success
+      
       localStorage.removeItem('noor_user');
       localStorage.removeItem('token');
       set({ user: null });

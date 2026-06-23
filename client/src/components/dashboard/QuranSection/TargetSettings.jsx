@@ -14,7 +14,7 @@ export default function TargetSettings({
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm  z-50 flex items-center justify-center p-4 select-none animate-fadeIn" dir="rtl">
       <div className="bg-gradient-to-b from-[#FFFFFF] to-[#FFFDF0] w-full max-w-md rounded-[32px] border-4 border-amber-300/40 shadow-2xl p-6 relative overflow-visible">
         
-        {/* Close Button */}
+        {}
         <button 
           onClick={() => { playPopSound(); onCancel(); }}
           className="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-all active:scale-90 cursor-pointer border border-slate-200/20"
@@ -22,7 +22,7 @@ export default function TargetSettings({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Header */}
+        {}
         <div className="text-center mb-6 px-6">
           <h3 className="text-xl sm:text-2xl font-black text-slate-800 flex items-center justify-center gap-2">
             🎯 اضبط أهدافك اليومية للقرآن
@@ -35,7 +35,7 @@ export default function TargetSettings({
         <form onSubmit={onSubmit} className="flex flex-col gap-5">
           <div className="grid grid-cols-1 gap-4">
             
-            {/* Hifz Target Input */}
+            {}
             <div className="bg-emerald-50/50 border border-emerald-100/60 p-4 rounded-2xl flex flex-col gap-2">
               <label className="text-sm font-black text-emerald-800 flex items-center gap-1.5">
                 <BookOpen className="w-4.5 h-4.5 text-emerald-600" />
@@ -67,7 +67,7 @@ export default function TargetSettings({
               </div>
             </div>
 
-            {/* Revision Target Input */}
+            {}
             <div className="bg-blue-50/50 border border-blue-100/60 p-4 rounded-2xl flex flex-col gap-2">
               <label className="text-sm font-black text-blue-800 flex items-center gap-1.5">
                 <RefreshCw className="w-4.5 h-4.5 text-blue-600 animate-spin-slow" />
@@ -101,7 +101,7 @@ export default function TargetSettings({
 
           </div>
 
-          {/* Action Buttons */}
+          {}
           <div className="flex items-center gap-3 mt-2">
             <button
               type="submit"
