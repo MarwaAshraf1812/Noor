@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
-import PropTypes from 'prop-types';
 
 export default function AnimatedCounter({ value }) {
   const count = useMotionValue(value);
@@ -15,7 +14,3 @@ export default function AnimatedCounter({ value }) {
 
   return <motion.span>{rounded}</motion.span>;
 }
-
-AnimatedCounter.propTypes = {
-  value: PropTypes.number.isRequired
-};

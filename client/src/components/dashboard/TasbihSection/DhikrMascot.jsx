@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PropTypes from 'prop-types';
 
 const DhikrMascot = memo(({ heroOfTasbih, name, currentCount = 0, target = 33 }) => {
   const getMoodBubble = () => {
@@ -91,12 +90,5 @@ const DhikrMascot = memo(({ heroOfTasbih, name, currentCount = 0, target = 33 })
 });
 
 DhikrMascot.displayName = 'DhikrMascot';
-
-DhikrMascot.propTypes = {
-  heroOfTasbih: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  currentCount: PropTypes.number,
-  target: PropTypes.number
-};
 
 export default DhikrMascot;

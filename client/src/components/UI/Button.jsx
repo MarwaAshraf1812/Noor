@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 const MotionLink = motion.create(Link);
 
@@ -61,14 +60,3 @@ export default function Button({
     </motion.button>
   );
 }
-
-Button.propTypes = {
-  children: PropTypes.node.isRequired,
-  onClick: PropTypes.func,
-  variant: PropTypes.oneOf(['primary', 'secondary', 'outline']),
-  type: PropTypes.string,
-  disabled: PropTypes.bool,
-  className: PropTypes.string,
-  href: PropTypes.string,
-  to: PropTypes.string
-};

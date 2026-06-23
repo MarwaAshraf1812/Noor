@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import PropTypes from 'prop-types';
 
 export default function Input({
   label,
@@ -69,16 +68,3 @@ export default function Input({
     </div>
   );
 }
-
-Input.propTypes = {
-  label: PropTypes.string,
-  id: PropTypes.string.isRequired,
-  type: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onChange: PropTypes.func.isRequired,
-  placeholder: PropTypes.string,
-  error: PropTypes.string,
-  required: PropTypes.bool,
-  disabled: PropTypes.bool,
-  className: PropTypes.string
-};
