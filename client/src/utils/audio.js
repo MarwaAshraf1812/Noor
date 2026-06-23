@@ -1,4 +1,14 @@
 let audioCtx = null;
+let isMuted = typeof window !== 'undefined' ? localStorage.getItem('noor_audio_muted') === 'true' : false;
+
+export const setMuted = (muted) => {
+  isMuted = muted;
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('noor_audio_muted', String(muted));
+  }
+};
+
+export const getMuted = () => isMuted;
 
 const getAudioContext = () => {
   if (typeof window === 'undefined') return null;
@@ -12,6 +22,7 @@ const getAudioContext = () => {
 };
 
 export const playPopSound = (frequency = 550) => {
+  if (isMuted) return;
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -33,6 +44,7 @@ export const playPopSound = (frequency = 550) => {
 };
 
 export const playChimeSound = () => {
+  if (isMuted) return;
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -56,6 +68,7 @@ export const playChimeSound = () => {
 };
 
 export const playGemCollectSound = () => {
+  if (isMuted) return;
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -85,6 +98,7 @@ export const playGemCollectSound = () => {
 };
 
 export const playTickSound = () => {
+  if (isMuted) return;
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
