@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -41,4 +40,28 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/framer-motion/') || id.includes('node_modules/motion-dom/')) {
+            return 'vendor-motion';
+          }
+          if (id.includes('node_modules/lucide-react/')) {
+            return 'vendor-lucide';
+          }
+          if (id.includes('node_modules/axios/')) {
+            return 'vendor-axios';
+          }
+          if (id.includes('node_modules/zustand/')) {
+            return 'vendor-zustand';
+          }
+        }
+      }
+    }
+  }
 })

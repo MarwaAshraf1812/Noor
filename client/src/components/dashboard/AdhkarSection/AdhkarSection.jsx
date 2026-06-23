@@ -9,6 +9,7 @@ import AdhkarProgressBar from './AdhkarProgressBar';
 import AdhkarCard from './AdhkarCard';
 import AdhkarMascotFooter from './AdhkarMascotFooter';
 import CelebrationModal from '../../UI/CelebrationModal';
+import SurahReaderModal, { SURAH_KEYS } from './SurahReaderModal';
 
 const ADHKAR_DATA = {
   morning: {
@@ -20,10 +21,10 @@ const ADHKAR_DATA = {
     illustration: "☀️",
     bgEmoji: "🐥",
     items: [
-      { id: 'm1', text: "آية الكرسي", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
-      { id: 'm3', text: "سورة الاخلاص", target: 3, color: "bg-[#E8F5E9] text-[#1B5E20] border-[#C8E6C9]" },
-      { id: 'm4', text: "سورة الفلق", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
-      { id: 'm2', text: "سورة الناس", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
+      { id: 'm1', text: "آية الكرسي", surahKey: "آية الكرسي", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
+      { id: 'm3', text: "سورة الاخلاص", surahKey: "سورة الاخلاص", target: 3, color: "bg-[#E8F5E9] text-[#1B5E20] border-[#C8E6C9]" },
+      { id: 'm4', text: "سورة الفلق", surahKey: "سورة الفلق", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
+      { id: 'm2', text: "سورة الناس", surahKey: "سورة الناس", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'm5', text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
       { id: 'm6', text: "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'm7', text: "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
@@ -40,10 +41,10 @@ const ADHKAR_DATA = {
     illustration: "🌙",
     bgEmoji: "🦉",
     items: [
-      { id: 'e1', text: "آية الكرسي", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
-      { id: 'e3', text: "سورة الاخلاص", target: 3, color: "bg-[#E8F5E9] text-[#1B5E20] border-[#C8E6C9]" },
-      { id: 'e4', text: "سورة الفلق", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
-      { id: 'e2', text: "سورة الناس", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
+      { id: 'e1', text: "آية الكرسي", surahKey: "آية الكرسي", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
+      { id: 'e3', text: "سورة الاخلاص", surahKey: "سورة الاخلاص", target: 3, color: "bg-[#E8F5E9] text-[#1B5E20] border-[#C8E6C9]" },
+      { id: 'e4', text: "سورة الفلق", surahKey: "سورة الفلق", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
+      { id: 'e2', text: "سورة الناس", surahKey: "سورة الناس", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'e5', text: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ", target: 1, color: "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]" },
       { id: 'e6', text: "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا", target: 3, color: "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]" },
       { id: 'e7', text: "اللَّهُمَّ مَا أَمْسَى بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ", target: 3, color: "bg-[#FFFDE7] text-[#F57F17] border-[#FFF9C4]" },
@@ -98,6 +99,7 @@ export default function AdhkarSection() {
   const [progressCounts, setProgressCounts] = useState({});
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationConfig, setCelebrationConfig] = useState(null);
+  const [surahReader, setSurahReader] = useState({ open: false, item: null, event: null });
 
   const { dashboardData, fetchDashboard, submitSession } = useAdhkarStore();
 
@@ -138,10 +140,21 @@ export default function AdhkarSection() {
     ? Math.round((currentCompletedCount / totalTargetCount) * 100) 
     : 0;
 
-  
   const handleDhikrClick = async (item, event) => {
     const currentRemaining = progressCounts[item.id] ?? item.target;
-    if (currentRemaining <= 0) return; 
+    if (currentRemaining <= 0) return;
+
+    if (item.surahKey && SURAH_KEYS.has(item.surahKey)) {
+      setSurahReader({ open: true, item, event });
+      return;
+    }
+
+    await executeDhikrCount(item, event);
+  };
+
+  const executeDhikrCount = async (item, event) => {
+    const currentRemaining = progressCounts[item.id] ?? item.target;
+    if (currentRemaining <= 0) return;
 
     const newRemaining = currentRemaining - 1;
     
@@ -199,6 +212,12 @@ export default function AdhkarSection() {
         setShowCelebration(true);
       }, 600);
     }
+  };
+
+  const handleSurahDone = () => {
+    const { item, event } = surahReader;
+    setSurahReader({ open: false, item: null, event: null });
+    if (item) executeDhikrCount(item, event);
   };
 
   const handleReset = () => {
@@ -262,6 +281,13 @@ export default function AdhkarSection() {
         isOpen={showCelebration}
         onClose={() => setShowCelebration(false)}
         {...celebrationConfig}
+      />
+
+      <SurahReaderModal
+        isOpen={surahReader.open}
+        surahName={surahReader.item?.surahKey}
+        onClose={() => setSurahReader({ open: false, item: null, event: null })}
+        onDone={handleSurahDone}
       />
 
     </div>
