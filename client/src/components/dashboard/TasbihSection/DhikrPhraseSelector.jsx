@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-export default function DhikrPhraseSelector({ phrases, activePhrase, handlePhraseChange }) {
+const DhikrPhraseSelector = memo(({ phrases, activePhrase, handlePhraseChange }) => {
   return (
     <div className="w-full bg-white/60 backdrop-blur-sm border border-slate-100 rounded-3xl p-4 mt-3 shadow-sm">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -23,4 +23,8 @@ export default function DhikrPhraseSelector({ phrases, activePhrase, handlePhras
       </div>
     </div>
   );
-}
+});
+
+DhikrPhraseSelector.displayName = 'DhikrPhraseSelector';
+
+export default DhikrPhraseSelector;

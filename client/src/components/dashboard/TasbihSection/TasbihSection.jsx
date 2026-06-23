@@ -23,7 +23,7 @@ const PHRASES = [
     textClass: 'text-[#84cc16]'
   },
   {
-    name: 'الله و اكبر',
+    name: 'الله أكبر',
     colorToken: 'yellow',
     strokeColor: '#eab308',
     glowColor: 'rgba(234, 179, 8, 0.35)',
@@ -220,6 +220,8 @@ export default function TasbihSection() {
         <DhikrMascot
           heroOfTasbih={heroOfTasbih}
           name={user?.name || 'عمر'}
+          currentCount={currentCount}
+          target={target}
         />
 
       </div>
