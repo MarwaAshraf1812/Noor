@@ -282,7 +282,6 @@ export const getPrayerDashboardData = async (userId, latitude, longitude) => {
       if (record) {
         weeklyGrid[dateKey][name] = { status: record.status, location: record.location };
       } else {
-        // If there's no record, check if the prayer time is before registration
         let isBeforeReg = false;
         if (timings && timings[name]) {
           const [pHour, pMin] = timings[name].split(':').map(Number);
@@ -324,12 +323,10 @@ export const getPrayerDashboardData = async (userId, latitude, longitude) => {
 
   let nextPrayer = null;
   for (const name of prayerNames) {
-    // Skip if already prayed today
     if (completedPrayers.has(name)) {
       continue;
     }
 
-    // Stop and keep active for 10 minutes after prayer time
     if (timeToMinutes(timings[name]) + 10 > currentMinutes) {
       nextPrayer = {
         name,
@@ -340,7 +337,6 @@ export const getPrayerDashboardData = async (userId, latitude, longitude) => {
     }
   }
 
-  // If the current time is after Isha, the next prayer is tomorrow's Fajr
   if (!nextPrayer) {
     const minutesUntilMidnight = 24 * 60 - currentMinutes;
     nextPrayer = {
