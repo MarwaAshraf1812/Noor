@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { AppRouter } from './routes';
 import useAuthStore from './store/authStore';
 import avatarGreenBoy from './assets/avatar_green_boy.png';
@@ -41,6 +42,7 @@ function App() {
   return (
     <Router>
       <AppRouter />
+      <Analytics />
     </Router>
   );
 }
